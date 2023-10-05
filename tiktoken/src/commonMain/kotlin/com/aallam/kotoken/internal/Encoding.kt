@@ -18,7 +18,7 @@ internal class Encoding(
     /**
      * A regex pattern string that is used to split the input text.
      */
-    val pattern: String,
+    val pattern: Regex,
 
     /**
      * A dictionary mapping mergeable token bytes to their ranks. The ranks must correspond to merge priority.
@@ -54,8 +54,8 @@ internal class Encoding(
 
         suspend fun getEncodingForModel(model: String, loader: BpeLoader): Encoding {
             val encodingName = modelToEncoding[model] ?: modelPrefixToEncoding.entries.firstOrNull { (prefix, _) ->
-                    model.startsWith(prefix)
-                }?.value ?: error("no encoding for model $model")
+                model.startsWith(prefix)
+            }?.value ?: error("no encoding for model $model")
             return getEncoding(encodingName, loader)
         }
     }
@@ -82,13 +82,22 @@ private suspend fun BpeLoader.cl100kBase(): Encoding {
     )
     return Encoding(
         name = EncodingName.CL100K_BASE,
-        pattern = """(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""",
+        pattern = Patterns.P100K,
         mergeableRanks = ranks,
         specialTokens = specialTokens,
     )
 }
 
-private const val pattern50k = """'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+internal object Patterns {
+    val P50K: Regex
+        get() = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
+
+    val P100K: Regex
+        get() = Regex(
+            """'s|'t|'re|'ve|'m|'ll|'d|[^\r\nA-Za-z0-9]?[A-Za-z]+|[0-9]{1,3}| ?[^\sA-Za-z0-9]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""",
+            RegexOption.IGNORE_CASE
+        )
+}
 
 private suspend fun BpeLoader.p50kEdit(): Encoding {
     val ranks = loadEncoding(EncodingName.P50K_EDIT)
@@ -97,7 +106,7 @@ private suspend fun BpeLoader.p50kEdit(): Encoding {
     )
     return Encoding(
         name = EncodingName.P50K_EDIT,
-        pattern = pattern50k,
+        pattern = Patterns.P50K,
         mergeableRanks = ranks,
         specialTokens = specialTokens,
     )
@@ -109,7 +118,7 @@ private suspend fun BpeLoader.p50kBase(): Encoding {
     require(ranks.size + specialTokens.size == 50281)
     return Encoding(
         name = EncodingName.P50K_BASE,
-        pattern = pattern50k,
+        pattern = Patterns.P50K,
         mergeableRanks = ranks,
         specialTokens = mapOf(Tokens.ENDOFTEXT to 50256),
         explicitNVocab = 50281,
@@ -121,7 +130,7 @@ private suspend fun BpeLoader.r50kBase(): Encoding {
     return Encoding(
         name = EncodingName.R50K_BASE,
         mergeableRanks = ranks,
-        pattern = pattern50k,
+        pattern = Patterns.P50K,
         specialTokens = mapOf(Tokens.ENDOFTEXT to 50256),
         explicitNVocab = 50257,
     )

@@ -5,13 +5,14 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFails
+import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     private lateinit var tiktoken: Tiktoken
 
     @BeforeTest
-    fun init() = runTest {
+    fun init() = runTest(timeout = 1.minutes)  {
         tiktoken = Tiktoken.getEncodingForModel(
             model = "gpt-3.5-turbo-16k",
             loader = loader
@@ -19,7 +20,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeUnicode() = runTest {
+    fun encodeUnicode() = runTest(timeout = 1.minutes)  {
         val encode = tiktoken.encode(
             text = "hello world!你好，世界！",
             allowedSpecial = setOf("all"),
@@ -30,7 +31,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeAllowSpecial() = runTest {
+    fun encodeAllowSpecial() = runTest(timeout = 1.minutes)  {
         val encode = tiktoken.encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>")
@@ -40,7 +41,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeDisallowAll() = runTest {
+    fun encodeDisallowAll() = runTest(timeout = 1.minutes)  {
         val encode = tiktoken.encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>"),
@@ -51,7 +52,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeFail() = runTest {
+    fun encodeFail() = runTest(timeout = 1.minutes)  {
         assertFails {
             tiktoken.encode(
                 text = "hello <|endoftext|><|endofprompt|>",
@@ -62,7 +63,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeFail2() = runTest {
+    fun encodeFail2() = runTest(timeout = 1.minutes)  {
         assertFails {
             tiktoken.encode(
                 text = "hello <|endoftext|>",

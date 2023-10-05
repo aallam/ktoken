@@ -92,9 +92,8 @@ internal class CoreBPE(
         fun create(
             encoder: Map<ByteString, Int>,
             specialTokensEncoder: Map<ByteString, Int>,
-            pattern: String
+            pattern: Regex
         ): CoreBPE {
-            val regex = Regex(pattern)
             val specialRegexStrs = specialTokensEncoder.keys.map { Regex.escape(it.utf8()) }
             val specialRegex = Regex(specialRegexStrs.joinToString("|"))
             val decoder = encoder.map { (key, value) -> value to key }.toMap()
@@ -111,7 +110,7 @@ internal class CoreBPE(
             return CoreBPE(
                 encoder = encoder,
                 specialTokensEncoder = specialTokensEncoder,
-                tlRegex = regex,
+                tlRegex = pattern,
                 tlSpecialRegex = specialRegex,
                 decoder = decoder,
                 specialTokensDecoder = specialTokensDecoder,
