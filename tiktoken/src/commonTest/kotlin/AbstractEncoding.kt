@@ -1,6 +1,5 @@
 import com.aallam.kotoken.Tiktoken
 import com.aallam.kotoken.loader.BpeLoader
-import com.aallam.kotoken.loader.RemoteBpeLoader
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -14,7 +13,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     @BeforeTest
     fun init() = runTest {
         tiktoken = Tiktoken.getEncodingForModel(
-            modelName = "gpt-3.5-turbo-16k",
+            model = "gpt-3.5-turbo-16k",
             loader = loader
         )
     }

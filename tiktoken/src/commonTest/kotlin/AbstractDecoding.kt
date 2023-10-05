@@ -1,9 +1,9 @@
 import com.aallam.kotoken.EncodingName
 import com.aallam.kotoken.Tiktoken
 import com.aallam.kotoken.loader.BpeLoader
-import com.aallam.kotoken.loader.RemoteBpeLoader
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 abstract class AbstractDecoding(
     private val loader: BpeLoader

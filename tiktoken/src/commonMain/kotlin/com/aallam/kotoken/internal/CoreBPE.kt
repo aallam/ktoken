@@ -87,12 +87,6 @@ internal class CoreBPE(
         return substring.encodeUtf8()
     }
 
-    private fun findRegexAllStringMatchIndex(text: ByteString, regex: Regex): List<IntArray> {
-        return regex.findAll(text.utf8()).map { matchResult ->
-            intArrayOf(matchResult.range.first, matchResult.range.last + 1)
-        }.toList()
-    }
-
     companion object {
 
         fun create(

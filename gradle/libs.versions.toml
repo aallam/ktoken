@@ -1,0 +1,23 @@
+[versions]
+kotlin = "1.9.0"
+coroutines = "1.7.3"
+ktor = "2.3.5"
+okio = "3.6.0"
+
+[libraries]
+# Coroutines
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+# Ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+# Okio
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+
+[plugins]
+kotlin-multiplaform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.13.2" }
+maven-publish = { id = "com.vanniktech.maven.publish", version = "0.25.3" }
+spotless = { id = "com.diffplug.gradle.spotless", version = "6.22.0" }
+dokka = { id = "org.jetbrains.dokka", version = "1.8.20" }

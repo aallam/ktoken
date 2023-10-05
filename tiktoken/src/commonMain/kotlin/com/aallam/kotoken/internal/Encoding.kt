@@ -52,12 +52,10 @@ internal class Encoding(
             }
         }
 
-        suspend fun getEncodingForModel(modelName: String, loader: BpeLoader): Encoding {
-            val encodingName = modelToEncoding[modelName]
-                ?: modelPrefixToEncoding.entries
-                    .firstOrNull { (prefix, _) -> modelName.startsWith(prefix) }
-                    ?.value
-                ?: error("no encoding for model $modelName")
+        suspend fun getEncodingForModel(model: String, loader: BpeLoader): Encoding {
+            val encodingName = modelToEncoding[model] ?: modelPrefixToEncoding.entries.firstOrNull { (prefix, _) ->
+                    model.startsWith(prefix)
+                }?.value ?: error("no encoding for model $model")
             return getEncoding(encodingName, loader)
         }
     }
@@ -69,7 +67,6 @@ private suspend fun BpeLoader.getEncoding(encodingName: EncodingName): Encoding 
         EncodingName.P50K_BASE -> p50kBase()
         EncodingName.R50K_BASE -> r50kBase()
         EncodingName.P50K_EDIT -> p50kEdit()
-        EncodingName.GPT2 -> gpt2()
         else -> error("Unknown encoding: $encodingName")
     }
 }
@@ -96,10 +93,7 @@ private const val pattern50k = """'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^
 private suspend fun BpeLoader.p50kEdit(): Encoding {
     val ranks = loadEncoding(EncodingName.P50K_EDIT)
     val specialTokens = mapOf(
-        Tokens.ENDOFTEXT to 50256,
-        Tokens.FIM_PREFIX to 50281,
-        Tokens.FIM_MIDDLE to 50282,
-        Tokens.FIM_SUFFIX to 50283
+        Tokens.ENDOFTEXT to 50256, Tokens.FIM_PREFIX to 50281, Tokens.FIM_MIDDLE to 50282, Tokens.FIM_SUFFIX to 50283
     )
     return Encoding(
         name = EncodingName.P50K_EDIT,
@@ -127,17 +121,6 @@ private suspend fun BpeLoader.r50kBase(): Encoding {
     return Encoding(
         name = EncodingName.R50K_BASE,
         mergeableRanks = ranks,
-        pattern = pattern50k,
-        specialTokens = mapOf(Tokens.ENDOFTEXT to 50256),
-        explicitNVocab = 50257,
-    )
-}
-
-private suspend fun BpeLoader.gpt2(): Encoding {
-    val mergeableRanks = loadVocab("vocab.bpe")
-    return Encoding(
-        name = EncodingName.GPT2,
-        mergeableRanks = mergeableRanks,
         pattern = pattern50k,
         specialTokens = mapOf(Tokens.ENDOFTEXT to 50256),
         explicitNVocab = 50257,
@@ -195,8 +178,6 @@ private val modelToEncoding: Map<String, EncodingName> = mapOf(
     "text-search-ada-doc-001" to EncodingName.R50K_BASE,
     "code-search-babbage-code-001" to EncodingName.R50K_BASE,
     "code-search-ada-code-001" to EncodingName.R50K_BASE,
-    // open source
-    "gpt2" to EncodingName.GPT2,
 )
 
 internal val modelPrefixToEncoding = mapOf(

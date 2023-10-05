@@ -6,6 +6,4 @@ import okio.ByteString
 public sealed interface BpeLoader {
 
     public suspend fun loadEncoding(encodingName: EncodingName): Map<ByteString, Int>
-
-    public suspend fun loadVocab(vocabFile: String): Map<ByteString, Int>
 }

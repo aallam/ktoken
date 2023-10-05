@@ -3,7 +3,7 @@ package com.aallam.kotoken.internal
 import com.aallam.kotoken.Tiktoken
 import okio.ByteString.Companion.encodeUtf8
 
-internal class TiktokenEncoder(
+internal class Tokeniser(
     val bpe: CoreBPE,
     val specialTokensSet: Set<String>,
 ) : Tiktoken {
