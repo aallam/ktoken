@@ -1,12 +1,12 @@
 package com.aallam.kotoken.internal
 
-import com.aallam.kotoken.Tiktoken
+import com.aallam.kotoken.Tokenizer
 import okio.ByteString.Companion.encodeUtf8
 
-internal class Tokeniser(
+internal class TokenEncoder(
     val bpe: CoreBPE,
     val specialTokensSet: Set<String>,
-) : Tiktoken {
+) : Tokenizer {
 
     override fun encode(
         text: String,
