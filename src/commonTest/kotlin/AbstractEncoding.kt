@@ -7,14 +7,14 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFails
 
-abstract class AbstractEncoding(private val modelName: String, private val loader: BpeLoader = RemoteBpeLoader()) {
+abstract class AbstractEncoding(private val loader: BpeLoader) {
 
-    lateinit var tiktoken: Tiktoken
+    private lateinit var tiktoken: Tiktoken
 
     @BeforeTest
     fun init() = runTest {
         tiktoken = Tiktoken.getEncodingForModel(
-            modelName = modelName,
+            modelName = "gpt-3.5-turbo-16k",
             loader = loader
         )
     }

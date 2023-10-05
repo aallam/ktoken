@@ -1,50 +1,29 @@
 package com.aallam.kotoken
 
-import com.aallam.kotoken.internal.RegexString
+import com.aallam.kotoken.internal.CoreBPE
+import com.aallam.kotoken.internal.Encoding
+import com.aallam.kotoken.internal.TiktokenEncoder
 import com.aallam.kotoken.loader.BpeLoader
 import com.aallam.kotoken.loader.RemoteBpeLoader
-import okio.ByteString.Companion.encodeUtf8
 
-data class Tiktoken(
-    val bpe: CoreBPE,
-    val bpeEncoding: Encoding,
-    val specialTokensSet: Set<String>,
-) {
+public interface Tiktoken {
 
-    fun encode(
+    public fun encode(
         text: String,
         allowedSpecial: Set<String> = emptySet(),
         disallowedSpecial: Set<String> = emptySet(),
-    ): IntArray {
-        val allowedSpecialSet = when {
-            allowedSpecial.size == 1 && allowedSpecial.first() == "all" -> specialTokensSet
-            else -> allowedSpecial
-        }
+    ): IntArray
 
-        val disallowedSpecialSet = when {
-            disallowedSpecial.size == 1 && disallowedSpecial.first() == "all" -> specialTokensSet - allowedSpecialSet
-            else -> disallowedSpecial
-        }
+    public fun decode(tokens: IntArray): String
 
-        if (disallowedSpecialSet.isNotEmpty()) {
-            val specialRegex = RegexString.regexSpecialTokens(disallowedSpecialSet)
-            val match = RegexString.findMatch(text, specialRegex)
-            require(match.isEmpty()) { "text contains disallowed special token: $match" }
-        }
-        return bpe.encodeNative(text, allowedSpecialSet.map { it.encodeUtf8() }.toSet())
-    }
+    public companion object {
 
-    fun decode(tokens: IntArray): String {
-        return bpe.decodeNative(tokens)
-    }
-
-    companion object {
-        suspend fun getEncoding(encodingName: EncodingName, loader: BpeLoader = RemoteBpeLoader()): Tiktoken {
+        public suspend fun getEncoding(encodingName: EncodingName, loader: BpeLoader = RemoteBpeLoader()): Tiktoken {
             val encoding = Encoding.getEncoding(encodingName, loader)
             return build(encoding)
         }
 
-        suspend fun getEncodingForModel(modelName: String, loader: BpeLoader = RemoteBpeLoader()): Tiktoken {
+        public suspend fun getEncodingForModel(modelName: String, loader: BpeLoader = RemoteBpeLoader()): Tiktoken {
             val encoding = Encoding.getEncodingForModel(modelName, loader)
             return build(encoding)
         }
@@ -56,7 +35,7 @@ data class Tiktoken(
                 pattern = encoding.pattern
             )
             val specialTokensSet = encoding.specialTokens.keys.map { it.utf8() }.toSet()
-            return Tiktoken(bpe = coreBPE, bpeEncoding = encoding, specialTokensSet = specialTokensSet)
+            return TiktokenEncoder(bpe = coreBPE, specialTokensSet = specialTokensSet)
         }
     }
 }

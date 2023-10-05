@@ -1,3 +1,3 @@
-import com.aallam.kotoken.EncodingName
+import com.aallam.kotoken.loader.RemoteBpeLoader
 
-class TestDecodingRemote: AbstractDecoding(encodingName = EncodingName.CL100K_BASE)
+class TestDecodingRemote : AbstractDecoding(loader = RemoteBpeLoader())

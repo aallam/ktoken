@@ -3,11 +3,12 @@ package com.aallam.kotoken
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class EncodingName(val fileName: String) {
-    companion object {
-        val CL100K_BASE = EncodingName("cl100k_base.tiktoken")
-        val P50K_BASE = EncodingName("p50k_base.tiktoken")
-        val P50K_EDIT = EncodingName("p50k_base.tiktoken")
-        val R50K_BASE = EncodingName("r50k_base.tiktoken")
+public value class EncodingName(public val fileName: String) {
+    public companion object {
+        public val CL100K_BASE: EncodingName = EncodingName("cl100k_base.tiktoken")
+        public val P50K_BASE: EncodingName = EncodingName("p50k_base.tiktoken")
+        public val P50K_EDIT: EncodingName = EncodingName("p50k_base.tiktoken")
+        public val R50K_BASE: EncodingName = EncodingName("r50k_base.tiktoken")
+        public val GPT2: EncodingName = EncodingName("vocab.bpe")
     }
 }

@@ -1,11 +1,10 @@
-package com.aallam.kotoken
+package com.aallam.kotoken.internal
 
-import com.aallam.kotoken.internal.RegexString
 import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.encodeUtf8
 
-data class CoreBPE(
+internal class CoreBPE(
     val encoder: Map<ByteString, Int>,
     val decoder: Map<Int, ByteString>,
     val specialTokensEncoder: Map<ByteString, Int>,
@@ -37,7 +36,7 @@ data class CoreBPE(
             var startFind = start
             while (true) {
                 val temp = cutBytes(textBytes, startFind, textBytes.size).utf8()
-                nextSpecial = RegexString.findIndex(temp, tlSpecialRegex)
+                nextSpecial = findIndex(temp, tlSpecialRegex)
                 if (nextSpecial != null) {
                     val token = cutBytes(textBytes, startFind + nextSpecial[0], startFind + nextSpecial[1])
                     if (allowedSpecial.contains(token)) {
@@ -55,7 +54,7 @@ data class CoreBPE(
             }
 
             val bytes = cutBytes(textBytes, start, end)
-            val matchIndex = RegexString.findAllIndexes(bytes.utf8(), tlRegex)
+            val matchIndex = findAllIndexes(bytes.utf8(), tlRegex)
             for (mat in matchIndex) {
                 val piece = cutBytes(textBytes, start + mat[0], start + mat[1])
                 val token = encoder[piece]

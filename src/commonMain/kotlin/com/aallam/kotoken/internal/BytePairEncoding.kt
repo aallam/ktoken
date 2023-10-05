@@ -1,4 +1,4 @@
-package com.aallam.kotoken
+package com.aallam.kotoken.internal
 
 import okio.ByteString
 

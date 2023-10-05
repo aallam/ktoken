@@ -1,4 +1,6 @@
-import com.aallam.kotoken.internal.RegexString
+import com.aallam.kotoken.internal.findAllIndexes
+import com.aallam.kotoken.internal.findIndex
+import com.aallam.kotoken.internal.findMatch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,16 +16,16 @@ class TestRegex {
         )
 
         for (word in words) {
-            val find = RegexString.findIndex(word, re)!!
+            val find = findIndex(word, re)!!
             val reFind = re.find(word)!!
             assertEquals(reFind.range.first, find[0])
             assertEquals(reFind.range.last + 1, find[1])
 
-            val findMatch = RegexString.findMatch(word, re)
+            val findMatch = findMatch(word, re)
             val reFindMatch = re.find(word)!!
             assertEquals(reFindMatch.value, findMatch)
 
-            val findAllIndexes = RegexString.findAllIndexes(word, re)
+            val findAllIndexes = findAllIndexes(word, re)
             val reFindAllIndexes = re.findAll(word)
             reFindAllIndexes.forEachIndexed { index, matchResult ->
                 val indexes = findAllIndexes[index]

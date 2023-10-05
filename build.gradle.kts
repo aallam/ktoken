@@ -7,6 +7,8 @@ repositories {
 }
 
 kotlin {
+    explicitApi()
+
     jvm {
         jvmToolchain(8)
         withJava()

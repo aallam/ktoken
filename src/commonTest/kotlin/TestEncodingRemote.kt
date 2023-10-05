@@ -1,1 +1,3 @@
-class TestEncodingRemote : AbstractEncoding(modelName = "gpt-3.5-turbo-16k")
+import com.aallam.kotoken.loader.RemoteBpeLoader
+
+class TestEncodingRemote : AbstractEncoding(loader = RemoteBpeLoader())

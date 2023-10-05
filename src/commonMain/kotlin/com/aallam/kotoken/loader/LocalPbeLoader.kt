@@ -1,16 +1,23 @@
 package com.aallam.kotoken.loader
 
 import com.aallam.kotoken.EncodingName
+import com.aallam.kotoken.internal.loadTiktokenBpe
+import com.aallam.kotoken.internal.loadVocabBpe
 import okio.Buffer
 import okio.ByteString
 import okio.FileSystem
 import okio.Path.Companion.toPath
 
-class LocalPbeLoader(private val fileSystem: FileSystem) : BpeLoader {
+public class LocalPbeLoader(private val fileSystem: FileSystem) : BpeLoader {
 
-    override suspend fun load(encodingName: EncodingName): Map<ByteString, Int> {
+    override suspend fun loadEncoding(encodingName: EncodingName): Map<ByteString, Int> {
         val data = readFile(encodingName.fileName, fileSystem)
         return loadTiktokenBpe(data)
+    }
+
+    override suspend fun loadVocab(vocabFile: String): Map<ByteString, Int> {
+        val data = readFile(vocabFile, fileSystem)
+        return loadVocabBpe(data)
     }
 
     private fun readFile(path: String, fileSystem: FileSystem): ByteArray {
