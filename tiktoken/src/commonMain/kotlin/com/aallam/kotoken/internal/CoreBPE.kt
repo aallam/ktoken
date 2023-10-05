@@ -11,10 +11,9 @@ internal class CoreBPE(
     val specialTokensDecoder: Map<Int, ByteString>,
     val tlRegex: Regex,
     val tlSpecialRegex: Regex,
-    val sortedTokenBytes: List<ByteString>
 ) {
 
-    fun decodeNative(tokens: IntArray): String {
+    fun decodeNative(tokens: List<Int>): String {
         val buffer = Buffer()
         for (token in tokens) {
             val tokenString = decoder[token] ?: specialTokensDecoder[token]
@@ -26,8 +25,8 @@ internal class CoreBPE(
         return byteString.utf8()
     }
 
-    fun encodeNative(text: String, allowedSpecial: Set<ByteString>): IntArray {
-        val ret = mutableListOf<Int>()
+    fun encodeNative(text: String, allowedSpecial: Set<ByteString>): List<Int> {
+        val encodedTokens = mutableListOf<Int>()
         val textBytes = text.encodeUtf8()
 
         var start = 0
@@ -59,24 +58,23 @@ internal class CoreBPE(
                 val piece = cutBytes(textBytes, start + mat[0], start + mat[1])
                 val token = encoder[piece]
                 if (token != null) {
-                    ret.add(token)
+                    encodedTokens.add(token)
                     continue
                 }
                 val tokens = bytePairEncode(piece, encoder)
-                ret.addAll(tokens.toList())
+                encodedTokens.addAll(tokens.toList())
             }
 
             if (nextSpecial != null) {
                 val temp = cutBytes(textBytes, start + nextSpecial[0], start + nextSpecial[1])
                 val token = specialTokensEncoder.getValue(temp)
-                ret.add(token)
+                encodedTokens.add(token)
                 start += nextSpecial[1]
             } else {
                 break@loop
             }
         }
-
-        return ret.toIntArray()
+        return encodedTokens
     }
 
     private fun cutBytes(byteString: ByteString, start: Int, end: Int): ByteString {
@@ -98,15 +96,6 @@ internal class CoreBPE(
             val specialRegex = Regex(specialRegexStrs.joinToString("|"))
             val decoder = encoder.map { (key, value) -> value to key }.toMap()
             val specialTokensDecoder = specialTokensEncoder.entries.associateBy({ it.value }, { it.key })
-            val sortedTokenBytes = encoder.keys
-                .sortedWith { a, b ->
-                    val minLength = minOf(a.size, b.size)
-                    for (index in 0..<minLength) {
-                        val cmp = a[index].compareTo(b[index])
-                        if (cmp != 0) return@sortedWith cmp
-                    }
-                    a.size - b.size
-                }
             return CoreBPE(
                 encoder = encoder,
                 specialTokensEncoder = specialTokensEncoder,
@@ -114,7 +103,6 @@ internal class CoreBPE(
                 tlSpecialRegex = specialRegex,
                 decoder = decoder,
                 specialTokensDecoder = specialTokensDecoder,
-                sortedTokenBytes = sortedTokenBytes
             )
         }
     }

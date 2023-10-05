@@ -12,7 +12,7 @@ internal class TokenEncoder(
         text: String,
         allowedSpecial: Set<String>,
         disallowedSpecial: Set<String>,
-    ): IntArray {
+    ): List<Int> {
         val allowedSpecialSet = when {
             allowedSpecial.size == 1 && allowedSpecial.first() == "all" -> specialTokensSet
             else -> allowedSpecial
@@ -31,7 +31,7 @@ internal class TokenEncoder(
         return bpe.encodeNative(text, allowedSpecialSet.map { it.encodeUtf8() }.toSet())
     }
 
-    override fun decode(tokens: IntArray): String {
+    override fun decode(tokens: List<Int>): String {
         return bpe.decodeNative(tokens)
     }
 }

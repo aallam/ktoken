@@ -16,7 +16,7 @@ abstract class AbstractDecoding(
             encodingName = EncodingName.CL100K_BASE,
             loader = loader
         )
-        val sourceTokens = intArrayOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
+        val sourceTokens = listOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
         val decoded = tokenizer.decode(sourceTokens)
         assertEquals("hello world!你好，世界！", decoded)
     }

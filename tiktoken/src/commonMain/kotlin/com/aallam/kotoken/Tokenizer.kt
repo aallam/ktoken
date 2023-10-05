@@ -26,7 +26,7 @@ public interface Tokenizer {
         text: String,
         allowedSpecial: Set<String> = emptySet(),
         disallowedSpecial: Set<String> = emptySet(),
-    ): IntArray
+    ): List<Int>
 
     /**
      * Decodes the given sequence of integers (tokens) back into text based on the underlying encoding scheme.
@@ -34,7 +34,7 @@ public interface Tokenizer {
      * @param tokens The array of integers to be decoded.
      * @return The decoded text.
      */
-    public fun decode(tokens: IntArray): String
+    public fun decode(tokens: List<Int>): String
 
     public companion object {
 

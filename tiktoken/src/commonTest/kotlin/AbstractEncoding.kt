@@ -12,7 +12,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     private lateinit var tokenizer: Tokenizer
 
     @BeforeTest
-    fun init() = runTest(timeout = 1.minutes)  {
+    fun init() = runTest(timeout = 1.minutes) {
         tokenizer = Tokenizer.getEncodingForModel(
             model = "gpt-3.5-turbo-16k",
             loader = loader
@@ -20,39 +20,39 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeUnicode() = runTest(timeout = 1.minutes)  {
+    fun encodeUnicode() = runTest(timeout = 1.minutes) {
         val encode = tokenizer.encode(
             text = "hello world!你好，世界！",
             allowedSpecial = setOf("all"),
             disallowedSpecial = setOf("all"),
         )
-        val sourceTokens = intArrayOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
+        val sourceTokens = listOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
         assertContentEquals(sourceTokens, encode, "Encoding should be equal")
     }
 
     @Test
-    fun encodeAllowSpecial() = runTest(timeout = 1.minutes)  {
+    fun encodeAllowSpecial() = runTest(timeout = 1.minutes) {
         val encode = tokenizer.encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>")
         )
-        val sourceTokens = intArrayOf(15339, 220, 100257)
+        val sourceTokens = listOf(15339, 220, 100257)
         assertContentEquals(sourceTokens, encode, "Encoding should be equal")
     }
 
     @Test
-    fun encodeDisallowAll() = runTest(timeout = 1.minutes)  {
+    fun encodeDisallowAll() = runTest(timeout = 1.minutes) {
         val encode = tokenizer.encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>"),
             disallowedSpecial = setOf("all")
         )
-        val sourceTokens = intArrayOf(15339, 220, 100257)
+        val sourceTokens = listOf(15339, 220, 100257)
         assertContentEquals(sourceTokens, encode, "Encoding should be equal")
     }
 
     @Test
-    fun encodeFail() = runTest(timeout = 1.minutes)  {
+    fun encodeFail() = runTest(timeout = 1.minutes) {
         assertFails {
             tokenizer.encode(
                 text = "hello <|endoftext|><|endofprompt|>",
@@ -63,7 +63,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeFail2() = runTest(timeout = 1.minutes)  {
+    fun encodeFail2() = runTest(timeout = 1.minutes) {
         assertFails {
             tokenizer.encode(
                 text = "hello <|endoftext|>",
