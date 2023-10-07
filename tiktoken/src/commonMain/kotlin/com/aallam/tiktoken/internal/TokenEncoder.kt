@@ -1,6 +1,6 @@
-package com.aallam.kotoken.internal
+package com.aallam.tiktoken.internal
 
-import com.aallam.kotoken.Tokenizer
+import com.aallam.tiktoken.Tokenizer
 import okio.ByteString.Companion.encodeUtf8
 
 internal class TokenEncoder(

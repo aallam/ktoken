@@ -1,3 +1,3 @@
-import com.aallam.kotoken.loader.RemoteBpeLoader
+import com.aallam.tiktoken.loader.RemoteBpeLoader
 
 class TestEncodingRemote : AbstractEncoding(loader = RemoteBpeLoader())

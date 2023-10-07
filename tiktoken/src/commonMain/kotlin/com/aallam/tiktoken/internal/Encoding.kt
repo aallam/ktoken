@@ -1,7 +1,7 @@
-package com.aallam.kotoken.internal
+package com.aallam.tiktoken.internal
 
-import com.aallam.kotoken.EncodingName
-import com.aallam.kotoken.loader.BpeLoader
+import com.aallam.tiktoken.EncodingName
+import com.aallam.tiktoken.loader.BpeLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.ByteString
@@ -88,15 +88,11 @@ private suspend fun BpeLoader.cl100kBase(): Encoding {
     )
 }
 
-internal object Patterns {
-    val P50K: Regex
-        get() = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
+internal expect val regexP100K: Regex
 
-    val P100K: Regex
-        get() = Regex(
-            """'s|'t|'re|'ve|'m|'ll|'d|[^\r\nA-Za-z0-9]?[A-Za-z]+|[0-9]{1,3}| ?[^\sA-Za-z0-9]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""",
-            RegexOption.IGNORE_CASE
-        )
+internal object Patterns {
+    val P50K: Regex = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
+    val P100K: Regex = regexP100K
 }
 
 private suspend fun BpeLoader.p50kEdit(): Encoding {

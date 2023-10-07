@@ -1,13 +1,17 @@
-package com.aallam.kotoken.internal
+package com.aallam.tiktoken.internal
 
-internal fun findIndex(text: String, regex: Regex): IntArray? {
+import okio.ByteString
+
+internal fun findIndex(bytes: ByteString, regex: Regex): IntRange? {
+    val text = bytes.utf8()
     val matchResult = regex.find(text) ?: return null
-    return intArrayOf(matchResult.range.first, matchResult.range.last + 1)
+    return matchResult.range.first..matchResult.range.last + 1
 }
 
-internal fun findAllIndexes(text: String, regex: Regex): List<IntArray> {
+internal fun findAllIndexes(bytes: ByteString, regex: Regex): List<IntRange> {
+    val text = bytes.utf8()
     return regex.findAll(text)
-        .map { matchResult -> intArrayOf(matchResult.range.first, matchResult.range.last + 1) }
+        .map { matchResult -> matchResult.range.first..matchResult.range.last + 1 }
         .toList()
 }
 

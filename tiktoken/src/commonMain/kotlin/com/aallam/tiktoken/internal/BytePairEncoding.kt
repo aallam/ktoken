@@ -1,4 +1,4 @@
-package com.aallam.kotoken.internal
+package com.aallam.tiktoken.internal
 
 import okio.ByteString
 

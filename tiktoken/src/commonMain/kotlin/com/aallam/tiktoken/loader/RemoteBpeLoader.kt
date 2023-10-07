@@ -1,7 +1,7 @@
-package com.aallam.kotoken.loader
+package com.aallam.tiktoken.loader
 
-import com.aallam.kotoken.EncodingName
-import com.aallam.kotoken.internal.loadTiktokenBpe
+import com.aallam.tiktoken.EncodingName
+import com.aallam.tiktoken.internal.loadTiktokenBpe
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.cache.*

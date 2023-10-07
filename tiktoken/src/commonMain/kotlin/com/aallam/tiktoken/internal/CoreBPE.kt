@@ -1,5 +1,6 @@
-package com.aallam.kotoken.internal
+package com.aallam.tiktoken.internal
 
+import com.aallam.tiktoken.internal.extension.slide
 import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.encodeUtf8
@@ -31,17 +32,17 @@ internal class CoreBPE(
 
         var start = 0
         loop@ while (true) {
-            var nextSpecial: IntArray?
+            var nextSpecial: IntRange?
             var startFind = start
             while (true) {
-                val temp = cutBytes(textBytes, startFind, textBytes.size).utf8()
+                val temp = cutBytes(textBytes, startFind..textBytes.size)
                 nextSpecial = findIndex(temp, tlSpecialRegex)
                 if (nextSpecial != null) {
-                    val token = cutBytes(textBytes, startFind + nextSpecial[0], startFind + nextSpecial[1])
+                    val token = cutBytes(textBytes, nextSpecial.slide(startFind))
                     if (allowedSpecial.contains(token)) {
                         break
                     }
-                    startFind += nextSpecial[1]
+                    startFind += nextSpecial.last
                 } else {
                     break
                 }
@@ -49,13 +50,13 @@ internal class CoreBPE(
 
             var end = textBytes.size
             if (nextSpecial != null) {
-                end = start + nextSpecial[0]
+                end = start + nextSpecial.first
             }
 
-            val bytes = cutBytes(textBytes, start, end)
-            val matchIndex = findAllIndexes(bytes.utf8(), tlRegex)
-            for (mat in matchIndex) {
-                val piece = cutBytes(textBytes, start + mat[0], start + mat[1])
+            val bytes = cutBytes(textBytes, start..end)
+            val matchIndex = findAllIndexes(bytes, tlRegex)
+            for (match in matchIndex) {
+                val piece = cutBytes(textBytes, match.slide(start))
                 val token = encoder[piece]
                 if (token != null) {
                     encodedTokens.add(token)
@@ -66,10 +67,10 @@ internal class CoreBPE(
             }
 
             if (nextSpecial != null) {
-                val temp = cutBytes(textBytes, start + nextSpecial[0], start + nextSpecial[1])
+                val temp = cutBytes(textBytes, nextSpecial.slide(start))
                 val token = specialTokensEncoder.getValue(temp)
                 encodedTokens.add(token)
-                start += nextSpecial[1]
+                start += nextSpecial.last
             } else {
                 break@loop
             }
@@ -77,12 +78,18 @@ internal class CoreBPE(
         return encodedTokens
     }
 
-    private fun cutBytes(byteString: ByteString, start: Int, end: Int): ByteString {
+    private fun cutBytes(byteString: ByteString, range: IntRange): ByteString {
         val string = byteString.utf8()
-        val startIndex = start.coerceAtLeast(0)
-        val endIndex = end.coerceAtMost(string.length)
+        val startIndex = range.first.coerceAtLeast(0)
+        val endIndex = range.last.coerceAtMost(string.length)
         val substring = string.substring(startIndex, endIndex)
         return substring.encodeUtf8()
+    }
+
+    private fun cutBytes2(byteString: ByteString, range: IntRange): ByteString {
+        val startIndex = range.first.coerceAtLeast(0)
+        val endIndex = range.last.coerceAtMost(byteString.size - 1)
+        return byteString.substring(startIndex, endIndex)
     }
 
     companion object {

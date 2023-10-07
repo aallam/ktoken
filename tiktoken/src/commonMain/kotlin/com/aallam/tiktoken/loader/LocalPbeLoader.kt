@@ -1,7 +1,7 @@
-package com.aallam.kotoken.loader
+package com.aallam.tiktoken.loader
 
-import com.aallam.kotoken.EncodingName
-import com.aallam.kotoken.internal.loadTiktokenBpe
+import com.aallam.tiktoken.EncodingName
+import com.aallam.tiktoken.internal.loadTiktokenBpe
 import okio.Buffer
 import okio.ByteString
 import okio.FileSystem

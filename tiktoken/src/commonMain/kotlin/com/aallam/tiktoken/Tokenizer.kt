@@ -1,10 +1,10 @@
-package com.aallam.kotoken
+package com.aallam.tiktoken
 
-import com.aallam.kotoken.internal.CoreBPE
-import com.aallam.kotoken.internal.Encoding
-import com.aallam.kotoken.internal.TokenEncoder
-import com.aallam.kotoken.loader.BpeLoader
-import com.aallam.kotoken.loader.RemoteBpeLoader
+import com.aallam.tiktoken.internal.CoreBPE
+import com.aallam.tiktoken.internal.Encoding
+import com.aallam.tiktoken.internal.TokenEncoder
+import com.aallam.tiktoken.loader.BpeLoader
+import com.aallam.tiktoken.loader.RemoteBpeLoader
 
 /**
  * A public interface for tokenization and de-tokenization tasks, especially tailored for handling text encoding and decoding.

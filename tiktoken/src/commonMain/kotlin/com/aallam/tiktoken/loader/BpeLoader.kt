@@ -1,6 +1,6 @@
-package com.aallam.kotoken.loader
+package com.aallam.tiktoken.loader
 
-import com.aallam.kotoken.EncodingName
+import com.aallam.tiktoken.EncodingName
 import okio.ByteString
 
 public sealed interface BpeLoader {

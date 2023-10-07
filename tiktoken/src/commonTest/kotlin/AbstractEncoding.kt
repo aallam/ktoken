@@ -1,27 +1,23 @@
-import com.aallam.kotoken.Tokenizer
-import com.aallam.kotoken.loader.BpeLoader
+import com.aallam.tiktoken.EncodingName
+import com.aallam.tiktoken.Tokenizer
+import com.aallam.tiktoken.loader.BpeLoader
 import kotlinx.coroutines.test.runTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractEncoding(private val loader: BpeLoader) {
 
-    private lateinit var tokenizer: Tokenizer
-
-    @BeforeTest
-    fun init() = runTest(timeout = 1.minutes) {
-        tokenizer = Tokenizer.getEncodingForModel(
-            model = "gpt-3.5-turbo-16k",
-            loader = loader
-        )
-    }
+    internal suspend fun tokenizer() = Tokenizer.getEncodingForModel(
+        model = "gpt-3.5-turbo-16k",
+        loader = loader
+    )
 
     @Test
     fun encodeUnicode() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer.encode(
+        val encode = tokenizer().encode(
             text = "hello world!你好，世界！",
             allowedSpecial = setOf("all"),
             disallowedSpecial = setOf("all"),
@@ -32,7 +28,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     @Test
     fun encodeAllowSpecial() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer.encode(
+        val encode = tokenizer().encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>")
         )
@@ -42,7 +38,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     @Test
     fun encodeDisallowAll() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer.encode(
+        val encode = tokenizer().encode(
             text = "hello <|endoftext|>",
             allowedSpecial = setOf("<|endoftext|>"),
             disallowedSpecial = setOf("all")
@@ -52,9 +48,69 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
+    fun encodeRegex() = runTest(timeout = 1.minutes) {
+        assertContentEquals(listOf(38149), tokenizer().encode("rer"))
+        assertContentEquals(listOf(2351, 81), tokenizer().encode("'rer"))
+        assertContentEquals(listOf(31213, 198, 220), tokenizer().encode("today\n "))
+        assertContentEquals(listOf(31213, 27907), tokenizer().encode("today\n \n"))
+        assertContentEquals(listOf(31213, 14211), tokenizer().encode("today\n  \n"))
+    }
+
+    @Test
+    fun basicEncodeR50K() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.getEncoding(EncodingName.R50K_BASE, loader)
+        assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
+    }
+
+    @Test
+    fun basicEncodeP50K() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.getEncoding(EncodingName.P50K_BASE, loader)
+        assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
+    }
+
+    @Test
+    fun basicEncodeCL100K() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.getEncoding(EncodingName.CL100K_BASE, loader)
+        assertContentEquals(listOf(15339, 1917), tokenizer.encode("hello world"))
+    }
+
+    @Test
+    fun emptyEncode() = runTest(timeout = 1.minutes) {
+        assertContentEquals(emptyList(), tokenizer().encode(""))
+    }
+
+    @Test
+    fun encodeSurrogatePairs() = runTest(timeout = 1.minutes) {
+        assertContentEquals(listOf(9468, 239, 235), tokenizer().encode("👍"))
+        assertContentEquals(listOf(9468, 239, 235), tokenizer().encode("\ud83d\udc4d"))
+    }
+
+    @Test
+    fun roundTrip() = runTest(timeout = 1.minutes) {
+        val values =
+            listOf("hello", "hello ", "hello  ", " hello", " hello ", " hello  ", "hello world", "请考试我的软件！12345")
+        for (value in values) {
+            val encoded = tokenizer().encode(value)
+            val decoded = tokenizer().decode(encoded)
+            assertEquals(value, decoded)
+        }
+    }
+
+    @Test
+    fun decode() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.getEncoding(
+            encodingName = EncodingName.CL100K_BASE,
+            loader = loader
+        )
+        val sourceTokens = listOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
+        val decoded = tokenizer.decode(sourceTokens)
+        assertEquals("hello world!你好，世界！", decoded)
+    }
+
+    @Test
     fun encodeFail() = runTest(timeout = 1.minutes) {
         assertFails {
-            tokenizer.encode(
+            tokenizer().encode(
                 text = "hello <|endoftext|><|endofprompt|>",
                 allowedSpecial = setOf("<|endoftext|>"),
                 disallowedSpecial = setOf("all")
@@ -63,9 +119,9 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun encodeFail2() = runTest(timeout = 1.minutes) {
+    fun encodeFailDisallowed() = runTest(timeout = 1.minutes) {
         assertFails {
-            tokenizer.encode(
+            tokenizer().encode(
                 text = "hello <|endoftext|>",
                 allowedSpecial = setOf("<|endoftext|>"),
                 disallowedSpecial = setOf("<|endoftext|>")
