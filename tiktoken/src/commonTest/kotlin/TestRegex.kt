@@ -1,7 +1,6 @@
-import com.aallam.tiktoken.internal.findAllIndexes
+import com.aallam.tiktoken.internal.findAllRanges
 import com.aallam.tiktoken.internal.findIndex
 import com.aallam.tiktoken.internal.findMatch
-import okio.ByteString.Companion.encodeUtf8
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,22 +16,21 @@ class TestRegex {
         )
 
         for (word in words) {
-            val bytes = word.encodeUtf8()
-            val find = findIndex(bytes, re)!!
+            val find = findIndex(word, 0, re)!!
             val reFind = re.find(word)!!
             assertEquals(reFind.range.first, find.first)
-            assertEquals(reFind.range.last + 1, find.last)
+            assertEquals(reFind.range.last, find.last)
 
             val findMatch = findMatch(word, re)
             val reFindMatch = re.find(word)!!
             assertEquals(reFindMatch.value, findMatch)
 
-            val findAllIndexes = findAllIndexes(bytes, re)
+            val findAllIndexes = findAllRanges(word, re)
             val reFindAllIndexes = re.findAll(word)
             reFindAllIndexes.forEachIndexed { index, matchResult ->
                 val indexes = findAllIndexes[index]
                 assertEquals(matchResult.range.first, indexes.first)
-                assertEquals(matchResult.range.last + 1, indexes.last)
+                assertEquals(matchResult.range.last, indexes.last)
             }
         }
     }

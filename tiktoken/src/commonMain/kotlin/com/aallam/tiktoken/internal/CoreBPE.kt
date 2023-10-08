@@ -1,6 +1,5 @@
 package com.aallam.tiktoken.internal
 
-import com.aallam.tiktoken.internal.extension.slide
 import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.encodeUtf8
@@ -27,79 +26,73 @@ internal class CoreBPE(
     }
 
     fun decode(token: Int): String {
-        val piece =  decoder[token] ?: specialTokensDecoder[token] ?: error("token missing from the vocabulary: $token")
+        val piece = decoder[token] ?: specialTokensDecoder[token] ?: error("token missing from the vocabulary: $token")
         return piece.utf8()
     }
 
     fun encode(text: String, allowedSpecial: Set<ByteString>): List<Int> {
         val encodedTokens = mutableListOf<Int>()
-        val textBytes = text.encodeUtf8()
-
         var start = 0
-        loop@ while (true) {
-            var nextSpecial: IntRange?
-            var startFind = start
-            while (true) {
-                val temp = cutBytes(textBytes, startFind..textBytes.size)
-                nextSpecial = findIndex(temp, tlSpecialRegex)
-                if (nextSpecial != null) {
-                    val token = cutBytes(textBytes, nextSpecial.slide(startFind))
-                    if (allowedSpecial.contains(token)) {
-                        break
-                    }
-                    startFind += nextSpecial.last
-                } else {
-                    break
-                }
-            }
+        while (true) {
+            val nextSpecial = findNextSpecialToken(start, text, allowedSpecial)
+            val end = nextSpecial?.first ?: text.length
+            val section = text.substring(start, end)
+            val ranges = findAllRanges(section, tlRegex)
 
-            var end = textBytes.size
-            if (nextSpecial != null) {
-                end = start + nextSpecial.first
-            }
-
-            val bytes = cutBytes(textBytes, start..end)
-            val matchIndex = findAllIndexes(bytes, tlRegex)
-            for (match in matchIndex) {
-                val piece = cutBytes(textBytes, match.slide(start))
+            // add encoded tokens
+            for (range in ranges) {
+                val piece = section.substring(range).encodeUtf8()
                 val token = encoder[piece]
                 if (token != null) {
                     encodedTokens.add(token)
-                    continue
+                } else {
+                    val tokens = bytePairEncode(piece, encoder)
+                    encodedTokens.addAll(tokens.toList())
                 }
-                val tokens = bytePairEncode(piece, encoder)
-                encodedTokens.addAll(tokens.toList())
             }
 
+            // add special tokens; end looping if no special token
             if (nextSpecial != null) {
-                val temp = cutBytes(textBytes, nextSpecial.slide(start))
-                val token = specialTokensEncoder[temp] ?: error("token missing from the vocabulary: $temp")
+                val specialToken = text.substring(nextSpecial)
+                val encoded = specialToken.encodeUtf8()
+                val token = specialTokensEncoder[encoded] ?: error("token missing from the vocabulary: $specialToken")
                 encodedTokens.add(token)
-                start += nextSpecial.last
+                start = nextSpecial.last + 1
             } else {
-                break@loop
+                break
             }
         }
         return encodedTokens
     }
 
+    /**
+     * Find the next allowed special token, if any.
+     */
+    private fun findNextSpecialToken(
+        start: Int,
+        text: String,
+        allowedSpecial: Set<ByteString>
+    ): IntRange? {
+        var nextSpecial: IntRange?
+        var startFind = start
+        while (true) {
+            nextSpecial = findIndex(text, startFind, tlSpecialRegex)
+            if (nextSpecial != null) {
+                val token = text.substring(nextSpecial).encodeUtf8()
+                if (allowedSpecial.contains(token)) {
+                    break
+                }
+                startFind = nextSpecial.first + 1
+            } else {
+                break
+            }
+        }
+        return nextSpecial
+    }
+
     fun encodeSingleToken(text: String): Int {
         val piece = text.encodeUtf8()
         return encoder[piece] ?: specialTokensEncoder[piece] ?: error("token missing from the vocabulary: $text")
-    }
-
-    private fun cutBytes(byteString: ByteString, range: IntRange): ByteString {
-        val string = byteString.utf8()
-        val startIndex = range.first.coerceAtLeast(0)
-        val endIndex = range.last.coerceAtMost(string.length)
-        val substring = string.substring(startIndex, endIndex)
-        return substring.encodeUtf8()
-    }
-
-    private fun cutBytes2(byteString: ByteString, range: IntRange): ByteString {
-        val startIndex = range.first.coerceAtLeast(0)
-        val endIndex = range.last.coerceAtMost(byteString.size - 1)
-        return byteString.substring(startIndex, endIndex)
     }
 
     companion object {

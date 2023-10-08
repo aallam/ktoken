@@ -1,17 +1,12 @@
 package com.aallam.tiktoken.internal
 
-import okio.ByteString
-
-internal fun findIndex(bytes: ByteString, regex: Regex): IntRange? {
-    val text = bytes.utf8()
-    val matchResult = regex.find(text) ?: return null
-    return matchResult.range.first..matchResult.range.last + 1
+internal fun findIndex(text: String, startIndex: Int, regex: Regex): IntRange? {
+    return regex.find(input = text, startIndex = startIndex)?.range
 }
 
-internal fun findAllIndexes(bytes: ByteString, regex: Regex): List<IntRange> {
-    val text = bytes.utf8()
+internal fun findAllRanges(text: String, regex: Regex): List<IntRange> {
     return regex.findAll(text)
-        .map { matchResult -> matchResult.range.first..matchResult.range.last + 1 }
+        .map { it.range }
         .toList()
 }
 
