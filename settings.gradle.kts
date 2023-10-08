@@ -1,6 +1,8 @@
-rootProject.name = "tiktoken.kt"
+rootProject.name = "ktoken"
 
-include(":tiktoken")
+include(":ktoken")
+include(":ktoken-bom")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
