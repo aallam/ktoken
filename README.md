@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.aallam.ktoken/ktoken?color=blue&label=Download)](https://central.sonatype.com/namespace/com.aallam.ktoken)
 [![License](https://img.shields.io/github/license/aallam/ktoken?color=yellow)](LICENSE.md)
 
-**Kt**oken, a BPE tokeniser for use with OpenAI's models.
+**Ktoken**, a BPE tokenizer for use with OpenAI's models.
 
 ## ⚡️ Getting Started
 
@@ -19,11 +19,11 @@ dependencies {
 }
 ```
 
-It is possible to use the library in two modes: **Remote** (*default*) and **Local**.
+The library can be used in two modes: **Remote** (*default*) and **Local**.
 
 ### Local
 
-Use `LocalPbeLoader` to load encoding from local files:
+Use `LocalPbeLoader` to load encodings from local files:
 
 ```kotlin
 val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
@@ -36,7 +36,7 @@ val text = tokenizer.decode(listOf(15339, 1917))
 
 #### JVM
 
-JVM artifacts include encoding files, you can use `LocalPbeLoader` with `FileSystem.RESOURCES` to load them:
+JVM artifacts include encoding files. You can use `LocalPbeLoader` with `FileSystem.RESOURCES` to load them:
 
 ```kotlin
 val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.RESOURCES))
@@ -44,9 +44,8 @@ val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, l
 
 ### Remote (default)
 
-1. Choose and add to your dependencies one of [Ktor's engines](https://ktor.io/docs/http-client-engines.html) to your `build.gradle` file.
-
-2. Use `LocalPbeLoader` to load encoding from local files:
+1. Choose and add one of [Ktor's engines](https://ktor.io/docs/http-client-engines.html) to your dependencies in the `build.gradle` file.
+2. Use `RemoteBpeLoader` to load encoding from remote sources:
 
 ```kotlin
 val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = RemoteBpeLoader())
@@ -59,7 +58,7 @@ val text = tokenizer.decode(listOf(15339, 1917))
 
 #### BOM
 
-Alternatively, you can use [ktoken-bom](/ktoken-bom)  by adding the following dependency to your `build.gradle` file
+Alternatively, you can use [ktoken-bom](/ktoken-bom) by adding the following dependency to your `build.gradle` file:
 
 ```groovy
 dependencies {
@@ -74,10 +73,9 @@ dependencies {
 
 #### Multiplaform
 
-In multiplatform projects, add **ktoken** dependency to `commonMain`, and choose
-an [engine](https://ktor.io/docs/http-client-engines.html) for each target.
+In multiplatform projects, add the **ktoken** dependency to `commonMain`, and choose an [engine](https://ktor.io/docs/http-client-engines.html) for each target.
 
 ## 📄 License
 
-Ktoken is an open-sourced software licensed under the [MIT license](LICENSE.md).
+Ktoken is open-source software licensed under the [MIT license](LICENSE.md).
 **This is not affiliated with nor endorsed by OpenAI**.
