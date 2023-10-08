@@ -26,9 +26,9 @@ The library can be used in two modes: **Remote** (*default*) and **Local**.
 Use `LocalPbeLoader` to load encodings from local files:
 
 ```kotlin
-val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
+val tokenizer = Tokenizer.encoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
 // To get the tokeniser corresponding to a specific model in the OpenAI API:
-val tokenizer = Tokenizer.getEncodingForModel(model = "gpt-4", loader = LocalPbeLoader(FileSystem.SYSTEM))
+val tokenizer = Tokenizer.encodingForModel(model = "gpt-4", loader = LocalPbeLoader(FileSystem.SYSTEM))
 
 val tokens = tokenizer.encode("hello world")
 val text = tokenizer.decode(listOf(15339, 1917))
@@ -39,7 +39,7 @@ val text = tokenizer.decode(listOf(15339, 1917))
 JVM artifacts include encoding files. You can use `LocalPbeLoader` with `FileSystem.RESOURCES` to load them:
 
 ```kotlin
-val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.RESOURCES))
+val tokenizer = Tokenizer.encoding(encodingName = EncodingName.CL100K_BASE, loader = LocalPbeLoader(FileSystem.RESOURCES))
 ```
 
 ### Remote (default)
@@ -48,9 +48,9 @@ val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, l
 2. Use `RemoteBpeLoader` to load encoding from remote sources:
 
 ```kotlin
-val tokenizer = Tokenizer.getEncoding(encodingName = EncodingName.CL100K_BASE, loader = RemoteBpeLoader())
+val tokenizer = Tokenizer.encoding(encodingName = EncodingName.CL100K_BASE, loader = RemoteBpeLoader())
 // To get the tokeniser corresponding to a specific model in the OpenAI API:
-val tokenizer = Tokenizer.getEncodingForModel(model = "gpt-4", loader = RemoteBpeLoader())
+val tokenizer = Tokenizer.encodingForModel(model = "gpt-4", loader = RemoteBpeLoader())
 
 val tokens = tokenizer.encode("hello world")
 val text = tokenizer.decode(listOf(15339, 1917))
