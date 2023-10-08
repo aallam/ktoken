@@ -14,7 +14,7 @@ internal class CoreBPE(
     val tlSpecialRegex: Regex,
 ) {
 
-    fun decodeNative(tokens: List<Int>): String {
+    fun decode(tokens: List<Int>): String {
         val buffer = Buffer()
         for (token in tokens) {
             val tokenString = decoder[token] ?: specialTokensDecoder[token]
@@ -26,7 +26,12 @@ internal class CoreBPE(
         return byteString.utf8()
     }
 
-    fun encodeNative(text: String, allowedSpecial: Set<ByteString>): List<Int> {
+    fun decode(token: Int): String {
+        val piece =  decoder[token] ?: specialTokensDecoder[token] ?: error("token missing from the vocabulary: $token")
+        return piece.utf8()
+    }
+
+    fun encode(text: String, allowedSpecial: Set<ByteString>): List<Int> {
         val encodedTokens = mutableListOf<Int>()
         val textBytes = text.encodeUtf8()
 
@@ -68,7 +73,7 @@ internal class CoreBPE(
 
             if (nextSpecial != null) {
                 val temp = cutBytes(textBytes, nextSpecial.slide(start))
-                val token = specialTokensEncoder.getValue(temp)
+                val token = specialTokensEncoder[temp] ?: error("token missing from the vocabulary: $temp")
                 encodedTokens.add(token)
                 start += nextSpecial.last
             } else {
@@ -76,6 +81,11 @@ internal class CoreBPE(
             }
         }
         return encodedTokens
+    }
+
+    fun encodeSingleToken(text: String): Int {
+        val piece = text.encodeUtf8()
+        return encoder[piece] ?: specialTokensEncoder[piece] ?: error("token missing from the vocabulary: $text")
     }
 
     private fun cutBytes(byteString: ByteString, range: IntRange): ByteString {

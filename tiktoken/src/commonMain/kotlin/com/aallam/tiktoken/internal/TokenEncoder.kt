@@ -28,10 +28,18 @@ internal class TokenEncoder(
             val match = findMatch(text, specialRegex)
             require(match.isEmpty()) { "text contains disallowed special token: $match" }
         }
-        return bpe.encodeNative(text, allowedSpecialSet.map { it.encodeUtf8() }.toSet())
+        return bpe.encode(text, allowedSpecialSet.map { it.encodeUtf8() }.toSet())
+    }
+
+    override fun encodeSingleToken(text: String): Int {
+        return bpe.encodeSingleToken(text)
     }
 
     override fun decode(tokens: List<Int>): String {
-        return bpe.decodeNative(tokens)
+        return bpe.decode(tokens)
+    }
+
+    override fun decode(token: Int): String {
+        return bpe.decode(token)
     }
 }

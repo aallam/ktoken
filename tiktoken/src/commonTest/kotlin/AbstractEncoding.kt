@@ -128,4 +128,58 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
             )
         }
     }
+
+    @Test
+    fun singleToken() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        for (n in 0..<1000) {
+            val token = n.toString()
+            val encoded = tokenizer.encodeSingleToken(token)
+            val decoded = tokenizer.decode(encoded)
+            assertEquals(token, decoded)
+        }
+    }
+
+    @Test
+    fun specialTokens() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        val eot = tokenizer.encodeSingleToken("<|endoftext|>")
+        val fip = tokenizer.encodeSingleToken("<|fim_prefix|>")
+        val fim = tokenizer.encodeSingleToken("<|fim_middle|>")
+        var text = "<|endoftext|> hello <|fim_prefix|>"
+        var tokens = tokenizer.encode(text, disallowedSpecial = emptySet())
+        assertNotContains(tokens, eot)
+        assertFails {
+            tokenizer.encode(text, disallowedSpecial = setOf("all"))
+        }
+        assertFails {
+            tokenizer.encode(text, disallowedSpecial = setOf("<|endoftext|>"))
+        }
+        assertFails {
+            tokenizer.encode(text, disallowedSpecial = setOf("<|fim_prefix|>"))
+        }
+
+        text = "<|endoftext|> hello <|fim_prefix|> there <|fim_middle|>"
+
+        tokens = tokenizer.encode(text, disallowedSpecial = emptySet())
+        assertNotContains(tokens, eot, fip, fim)
+
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("all"), disallowedSpecial = emptySet())
+        assertContains(tokens, eot, fip, fim)
+
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("all"), disallowedSpecial = setOf("all"))
+        assertContains(tokens, eot, fip, fim)
+
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|fim_prefix|>"), disallowedSpecial = emptySet())
+        assertContains(tokens, fip)
+        assertNotContains(tokens, eot, fim)
+
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|endoftext|>"), disallowedSpecial = emptySet())
+        assertContains(tokens, eot)
+        assertNotContains(tokens, fip, fim)
+
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|fim_middle|>"), disallowedSpecial = emptySet())
+        assertContains(tokens, fim)
+        assertNotContains(tokens, fip, eot)
+    }
 }

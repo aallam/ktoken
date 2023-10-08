@@ -36,28 +36,4 @@ class TestRegex {
             }
         }
     }
-
-    @Test
-    fun unicodeJS() {
-        val js = """(?:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""".toRegex(RegexOption.IGNORE_CASE)
-        val str = " \u00850"
-        val matches = js.findAll(str).toList()
-        matches.forEach { println(it.range) }
-    }
-
-    @Test
-    fun unicodeJVM() {
-        val jvm = """(?U)'s|'t|'re|'ve|'m|'ll|'d|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""".toRegex(RegexOption.IGNORE_CASE)
-        val str = " \u00850"
-        val matches = jvm.findAll(str).toList()
-        matches.forEach { println(it.range) }
-    }
-
-    @Test
-    fun unicodeNative() {
-        val native = """'s|'t|'re|'ve|'m|'ll|'d|[^\r\nA-Za-z0-9]?[A-Za-z]+|[0-9]{1,3}| ?[^\sA-Za-z0-9]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+""".toRegex(RegexOption.IGNORE_CASE)
-        val str = " \u00850"
-        val matches = native.findAll(str).toList()
-        matches.forEach { println(it.range) }
-    }
 }
