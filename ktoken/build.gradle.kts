@@ -73,9 +73,11 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-        val appleTest by getting {
-            dependencies {
-                implementation(libs.ktor.client.darwin)
+        if (HostManager.hostIsMac) {
+            val appleTest by getting {
+                dependencies {
+                    implementation(libs.ktor.client.darwin)
+                }
             }
         }
     }
