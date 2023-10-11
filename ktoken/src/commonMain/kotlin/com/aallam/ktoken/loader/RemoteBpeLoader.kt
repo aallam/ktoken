@@ -1,6 +1,5 @@
 package com.aallam.ktoken.loader
 
-import com.aallam.ktoken.EncodingName
 import com.aallam.ktoken.internal.loadTiktokenBpe
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -13,8 +12,8 @@ public class RemoteBpeLoader(
     private val url: String = "https://openaipublic.blob.core.windows.net/encodings"
 ) : BpeLoader {
 
-    override suspend fun loadEncoding(encodingName: EncodingName): Map<ByteString, Int> {
-        val data = downloadFile("$url/${encodingName.fileName}")
+    override suspend fun loadEncoding(encodingPath: String): Map<ByteString, Int> {
+        val data = downloadFile("$url/$encodingPath")
         return loadTiktokenBpe(data)
     }
 

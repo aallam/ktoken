@@ -29,7 +29,7 @@ Utilize LocalPbeLoader to retrieve encodings from local files:
 
 ```kotlin
 val tokenizer = Tokenizer.encoding(
-    encodingName = EncodingName.CL100K_BASE, 
+    encoding = Encoding.CL100K_BASE, 
     loader = LocalPbeLoader(FileSystem.SYSTEM)
 )
 
@@ -49,7 +49,7 @@ Artifacts for JVM include encoding files. Use `FileSystem.RESOURCES` to load the
 
 ```kotlin
 val tokenizer = Tokenizer.encoding(
-    encodingName = EncodingName.CL100K_BASE, 
+    encoding = Encoding.CL100K_BASE, 
     loader = LocalPbeLoader(FileSystem.RESOURCES)
 )
 ```
@@ -63,7 +63,7 @@ val tokenizer = Tokenizer.encoding(
 
 ```kotlin
 val tokenizer = Tokenizer.encoding(
-    encodingName = EncodingName.CL100K_BASE, 
+    encoding = Encoding.CL100K_BASE, 
     loader = RemoteBpeLoader()
 )
 

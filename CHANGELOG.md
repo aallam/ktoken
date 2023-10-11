@@ -1,8 +1,9 @@
 # 0.2.0
-> 11 Oct 2023
+> 12 Oct 2023
 
 ### Changed
 - **JVM**: use local PBE loader by default
+- **Encoding**: enable custom encoding
 
 # 0.1.0
 > 08 Oct 2023

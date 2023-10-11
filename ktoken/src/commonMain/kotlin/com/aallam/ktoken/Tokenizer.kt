@@ -88,13 +88,13 @@ public interface Tokenizer {
         /**
          * Asynchronously obtains an instance of [Tokenizer] with the specified encoding scheme.
          *
-         * @param encodingName The name of the encoding scheme to be used.
+         * @param encoding The encoding scheme to be used.
          * @param loader The loader to be used for obtaining the encoding scheme.
          * @return An instance of [Tokenizer] with the specified encoding.
          */
-        public suspend fun encoding(encodingName: EncodingName, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
-            val encoding = Encoding.getEncoding(encodingName, loader)
-            return create(encoding)
+        public suspend fun encoding(encoding: Encoding, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
+            val tokenEncoding = TokenEncoding.getEncoding(encoding, loader)
+            return create(tokenEncoding)
         }
 
         /**
@@ -105,23 +105,23 @@ public interface Tokenizer {
          * @return An instance of [Tokenizer] with the encoding scheme for the specified model.
          */
         public suspend fun encodingForModel(model: String, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
-            val encoding = Encoding.getEncodingForModel(model, loader)
-            return create(encoding)
+            val tokenEncoding = TokenEncoding.getEncodingForModel(model, loader)
+            return create(tokenEncoding)
         }
 
         /**
-         * Builds and returns an instance of [Tokenizer] based on the specified [Encoding].
+         * Builds and returns an instance of [Tokenizer] based on the specified [TokenEncoding].
          *
-         * @param encoding The [Encoding] object representing the encoding scheme to be used.
+         * @param tokenEncoding The [TokenEncoding] object representing the encoding scheme to be used.
          * @return An instance of [Tokenizer].
          */
-        public fun create(encoding: Encoding): Tokenizer {
+        public fun create(tokenEncoding: TokenEncoding): Tokenizer {
             val coreBPE = CoreBPE.create(
-                encoder = encoding.mergeableRanks,
-                specialTokensEncoder = encoding.specialTokens,
-                pattern = encoding.pattern
+                encoder = tokenEncoding.mergeableRanks,
+                specialTokensEncoder = tokenEncoding.specialTokens,
+                pattern = tokenEncoding.pattern
             )
-            val specialTokensSet = encoding.specialTokens.keys.map { it.utf8() }.toSet()
+            val specialTokensSet = tokenEncoding.specialTokens.keys.map { it.utf8() }.toSet()
             return TokenEncoder(bpe = coreBPE, specialTokensSet = specialTokensSet)
         }
     }

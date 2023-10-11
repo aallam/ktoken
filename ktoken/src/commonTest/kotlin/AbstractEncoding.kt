@@ -1,5 +1,5 @@
-import com.aallam.ktoken.EncodingName
 import com.aallam.ktoken.Tokenizer
+import com.aallam.ktoken.Encoding
 import com.aallam.ktoken.loader.BpeLoader
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -58,19 +58,19 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     @Test
     fun basicEncodeR50K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(EncodingName.R50K_BASE, loader)
+        val tokenizer = Tokenizer.encoding(Encoding.R50K_BASE, loader)
         assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
     }
 
     @Test
     fun basicEncodeP50K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(EncodingName.P50K_BASE, loader)
+        val tokenizer = Tokenizer.encoding(Encoding.P50K_BASE, loader)
         assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
     }
 
     @Test
     fun basicEncodeCL100K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(EncodingName.CL100K_BASE, loader)
+        val tokenizer = Tokenizer.encoding(Encoding.CL100K_BASE, loader)
         assertContentEquals(listOf(15339, 1917), tokenizer.encode("hello world"))
     }
 
@@ -99,7 +99,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     @Test
     fun decode() = runTest(timeout = 1.minutes) {
         val tokenizer = Tokenizer.encoding(
-            encodingName = EncodingName.CL100K_BASE,
+            encoding = Encoding.CL100K_BASE,
             loader = loader
         )
         val sourceTokens = listOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
