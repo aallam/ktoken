@@ -5,6 +5,7 @@ ktor = "2.3.5"
 okio = "3.6.0"
 openai = "3.5.0"
 dataframe = "0.11.1"
+benchmark = "0.4.9"
 
 [libraries]
 # Coroutines
@@ -24,6 +25,9 @@ okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 openai-client = { group = "com.aallam.openai", name = "openai-client", version.ref = "openai" }
 # Dataframe
 dataframe = { group = "org.jetbrains.kotlinx", name = "dataframe", version.ref = "dataframe" }
+# benchmark
+kotlinx-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "benchmark" }
+
 
 [plugins]
 kotlin-multiplaform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -31,3 +35,5 @@ kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-va
 maven-publish = { id = "com.vanniktech.maven.publish", version = "0.25.3" }
 spotless = { id = "com.diffplug.gradle.spotless", version = "6.22.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.8.20" }
+kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "benchmark" }
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
