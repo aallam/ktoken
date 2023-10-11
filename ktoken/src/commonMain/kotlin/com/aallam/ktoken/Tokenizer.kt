@@ -2,8 +2,8 @@ package com.aallam.ktoken
 
 import com.aallam.ktoken.internal.CoreBPE
 import com.aallam.ktoken.internal.TokenEncoder
+import com.aallam.ktoken.internal.defaultPbeLoader
 import com.aallam.ktoken.loader.BpeLoader
-import com.aallam.ktoken.loader.RemoteBpeLoader
 
 /**
  * A public interface for tokenization and de-tokenization tasks, especially tailored for handling text encoding and decoding.
@@ -92,7 +92,7 @@ public interface Tokenizer {
          * @param loader The loader to be used for obtaining the encoding scheme.
          * @return An instance of [Tokenizer] with the specified encoding.
          */
-        public suspend fun encoding(encodingName: EncodingName, loader: BpeLoader = RemoteBpeLoader()): Tokenizer {
+        public suspend fun encoding(encodingName: EncodingName, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
             val encoding = Encoding.getEncoding(encodingName, loader)
             return create(encoding)
         }
@@ -104,7 +104,7 @@ public interface Tokenizer {
          * @param loader The loader to be used for obtaining the encoding scheme.
          * @return An instance of [Tokenizer] with the encoding scheme for the specified model.
          */
-        public suspend fun encodingForModel(model: String, loader: BpeLoader = RemoteBpeLoader()): Tokenizer {
+        public suspend fun encodingForModel(model: String, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
             val encoding = Encoding.getEncodingForModel(model, loader)
             return create(encoding)
         }

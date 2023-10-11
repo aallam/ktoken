@@ -1,10 +1,13 @@
 package com.aallam.ktoken.internal
 
+import com.aallam.ktoken.loader.BpeLoader
 import okio.ByteString
 import okio.ByteString.Companion.decodeBase64
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
+
+internal expect fun defaultPbeLoader(): BpeLoader
 
 internal fun loadTiktokenBpe(data: ByteArray): Map<ByteString, Int> {
     val bpeRanks = mutableMapOf<ByteString, Int>()
