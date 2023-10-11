@@ -3,6 +3,8 @@ kotlin = "1.9.10"
 coroutines = "1.7.3"
 ktor = "2.3.5"
 okio = "3.6.0"
+openai = "3.5.0"
+dataframe = "0.11.1"
 
 [libraries]
 # Coroutines
@@ -16,9 +18,12 @@ ktor-client-apache = { group = "io.ktor", name = "ktor-client-apache", version.r
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-java = { group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
 ktor-client-jetty = { group = "io.ktor", name = "ktor-client-jetty", version.ref = "ktor" }
-
 # Okio
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+# Openai client
+openai-client = { group = "com.aallam.openai", name = "openai-client", version.ref = "openai" }
+# Dataframe
+dataframe = { group = "org.jetbrains.kotlinx", name = "dataframe", version.ref = "dataframe" }
 
 [plugins]
 kotlin-multiplaform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
