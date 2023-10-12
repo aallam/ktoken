@@ -1,10 +1,9 @@
 package com.aallam.ktoken
 
+import com.aallam.ktoken.internal.EncodingStore
 import com.aallam.ktoken.internal.modelPrefixToEncoding
 import com.aallam.ktoken.internal.modelToEncoding
 import com.aallam.ktoken.loader.BpeLoader
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import okio.ByteString
 
 public class TokenEncoding(
@@ -38,8 +37,11 @@ public class TokenEncoding(
     }
 
     public companion object {
-        private val tokenEncodingMap = mutableMapOf<Encoding, TokenEncoding>()
-        private val mutex = Mutex()
+
+        /**
+         * Encodings cache store.
+         */
+        private val cache = EncodingStore()
 
         /**
          * Asynchronously obtains an instance of [TokenEncoding].
@@ -49,11 +51,9 @@ public class TokenEncoding(
          * @return An instance of [TokenEncoding].
          */
         public suspend fun getEncoding(encoding: Encoding, loader: BpeLoader): TokenEncoding {
-            return mutex.withLock {
-                tokenEncodingMap[encoding] ?: run {
-                    val ranks = loader.loadEncoding(encoding.file)
-                    encoding.encoding(ranks).also { tokenEncodingMap[encoding] = it }
-                }
+            return cache.get(encoding) ?: run {
+                val ranks = loader.loadEncoding(encoding.file)
+                encoding.encoding(ranks).also { cache.put(encoding, it) }
             }
         }
 
