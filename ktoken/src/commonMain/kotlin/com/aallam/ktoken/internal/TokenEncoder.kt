@@ -2,6 +2,9 @@ package com.aallam.ktoken.internal
 
 import com.aallam.ktoken.Tokenizer
 
+/**
+ * Default implementation of [Tokenizer].
+ */
 internal class TokenEncoder(
     val bpe: CoreBPE,
     val specialTokensSet: Set<String>,

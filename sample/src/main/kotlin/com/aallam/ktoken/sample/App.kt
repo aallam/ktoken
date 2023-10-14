@@ -33,7 +33,7 @@ fun main() {
         .tail(topN * 2) // first cut to first 2k entries, assuming less than half will be filtered out
         .remove("Time")
 
-    val tokenizer = runBlocking(Dispatchers.IO) { Tokenizer.encodingForModel(embeddingModel.id) }
+    val tokenizer = runBlocking(Dispatchers.IO) { Tokenizer.of(embeddingModel.id) }
     dataframe = dataframe
             .add("n_tokens") { tokenizer.encode(getValue("combined")).size }
             .filter { it.getValue<Int>("n_tokens") <= maxTokens }

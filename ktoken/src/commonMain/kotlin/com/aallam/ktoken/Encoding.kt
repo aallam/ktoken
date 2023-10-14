@@ -23,7 +23,7 @@ public interface Encoding {
      *
      * @param ranks byte pair encoding ranks.
      */
-    public fun encoding(ranks: Map<ByteString, Int>): TokenEncoding
+    public fun encodingConfig(ranks: Map<ByteString, Int>): EncodingConfig
 
     public companion object {
         /**

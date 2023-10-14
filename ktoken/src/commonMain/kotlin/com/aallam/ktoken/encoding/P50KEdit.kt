@@ -1,7 +1,7 @@
 package com.aallam.ktoken.encoding
 
 import com.aallam.ktoken.Encoding
-import com.aallam.ktoken.TokenEncoding
+import com.aallam.ktoken.EncodingConfig
 import com.aallam.ktoken.internal.Patterns
 import com.aallam.ktoken.internal.Tokens
 import okio.ByteString
@@ -13,14 +13,14 @@ public data class P50KEdit(
     override val file: String = "p50k_base.tiktoken"
 ) : Encoding {
 
-    override fun encoding(ranks: Map<ByteString, Int>): TokenEncoding {
+    override fun encodingConfig(ranks: Map<ByteString, Int>): EncodingConfig {
         val specialTokens = mapOf(
             Tokens.ENDOFTEXT to 50256,
             Tokens.FIM_PREFIX to 50281,
             Tokens.FIM_MIDDLE to 50282,
             Tokens.FIM_SUFFIX to 50283
         )
-        return TokenEncoding(
+        return EncodingConfig(
             pattern = Patterns.P50K,
             mergeableRanks = ranks,
             specialTokens = specialTokens,

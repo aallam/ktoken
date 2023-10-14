@@ -28,13 +28,13 @@ Ktoken operates in two modes: Local (default for JVM) and Remote (default for JS
 Utilize LocalPbeLoader to retrieve encodings from local files:
 
 ```kotlin
-val tokenizer = Tokenizer.encoding(
+val tokenizer = Tokenizer.of(
     encoding = Encoding.CL100K_BASE, 
     loader = LocalPbeLoader(FileSystem.SYSTEM)
 )
 
 // For a specific model in the OpenAI API:
-val tokenizer = Tokenizer.encodingForModel(
+val tokenizer = Tokenizer.of(
     model = "gpt-4", 
     loader = LocalPbeLoader(FileSystem.SYSTEM)
 )
@@ -48,7 +48,7 @@ val text = tokenizer.decode(listOf(15339, 1917))
 Artifacts for JVM include encoding files. Use `FileSystem.RESOURCES` to load them:
 
 ```kotlin
-val tokenizer = Tokenizer.encoding(
+val tokenizer = Tokenizer.of(
     encoding = Encoding.CL100K_BASE, 
     loader = LocalPbeLoader(FileSystem.RESOURCES)
 )
@@ -62,13 +62,13 @@ val tokenizer = Tokenizer.encoding(
 2. Use `RemoteBpeLoader`: To load encoding from remote sources:
 
 ```kotlin
-val tokenizer = Tokenizer.encoding(
+val tokenizer = Tokenizer.of(
     encoding = Encoding.CL100K_BASE, 
     loader = RemoteBpeLoader()
 )
 
 // For a specific model in the OpenAI API:
-val tokenizer = Tokenizer.encodingForModel(
+val tokenizer = Tokenizer.of(
     model = "gpt-4", 
     loader = RemoteBpeLoader()
 )

@@ -10,7 +10,7 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractEncoding(private val loader: BpeLoader) {
 
-    internal suspend fun tokenizer() = Tokenizer.encodingForModel(
+    internal suspend fun tokenizer() = Tokenizer.of(
         model = "gpt-3.5-turbo-16k",
         loader = loader
     )
@@ -58,19 +58,19 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     @Test
     fun basicEncodeR50K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(Encoding.R50K_BASE, loader)
+        val tokenizer = Tokenizer.of(Encoding.R50K_BASE, loader)
         assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
     }
 
     @Test
     fun basicEncodeP50K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(Encoding.P50K_BASE, loader)
+        val tokenizer = Tokenizer.of(Encoding.P50K_BASE, loader)
         assertContentEquals(listOf(31373, 995), tokenizer.encode("hello world"))
     }
 
     @Test
     fun basicEncodeCL100K() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(Encoding.CL100K_BASE, loader)
+        val tokenizer = Tokenizer.of(Encoding.CL100K_BASE, loader)
         assertContentEquals(listOf(15339, 1917), tokenizer.encode("hello world"))
     }
 
@@ -98,7 +98,7 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
 
     @Test
     fun decode() = runTest(timeout = 1.minutes) {
-        val tokenizer = Tokenizer.encoding(
+        val tokenizer = Tokenizer.of(
             encoding = Encoding.CL100K_BASE,
             loader = loader
         )

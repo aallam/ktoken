@@ -6,7 +6,11 @@ import com.aallam.ktoken.internal.modelToEncoding
 import com.aallam.ktoken.loader.BpeLoader
 import okio.ByteString
 
-public class TokenEncoding(
+/**
+ * Manages configurations for token encoding, providing the settings and mappings needed to perform
+ * byte pair encoding (BPE) and handle special tokens.
+ */
+public class EncodingConfig(
 
     /**
      * A regex pattern string that is used to split the input text.
@@ -44,32 +48,32 @@ public class TokenEncoding(
         private val cache = EncodingStore()
 
         /**
-         * Asynchronously obtains an instance of [TokenEncoding].
+         * Asynchronously obtains an instance of [EncodingConfig].
          *
          * @param encoding The encoding scheme.
          * @param loader The loader to be used for obtaining the encoding scheme.
-         * @return An instance of [TokenEncoding].
+         * @return An instance of [EncodingConfig].
          */
-        public suspend fun getEncoding(encoding: Encoding, loader: BpeLoader): TokenEncoding {
+        public suspend fun of(encoding: Encoding, loader: BpeLoader): EncodingConfig {
             return cache.get(encoding) ?: run {
                 val ranks = loader.loadEncoding(encoding.file)
-                encoding.encoding(ranks).also { cache.put(encoding, it) }
+                encoding.encodingConfig(ranks).also { cache.put(encoding, it) }
             }
         }
 
         /**
-         * Asynchronously obtains an instance of [TokenEncoding].
+         * Asynchronously obtains an instance of [EncodingConfig].
          *
          * @param model The name of the model whose encoding scheme is to be used.
          * @param loader The loader to be used for obtaining the encoding scheme.
-         * @return An instance of [TokenEncoding] for the specified model.
+         * @return An instance of [EncodingConfig] for the specified model.
          */
-        public suspend fun getEncodingForModel(model: String, loader: BpeLoader): TokenEncoding {
+        public suspend fun of(model: String, loader: BpeLoader): EncodingConfig {
             val encoding = modelToEncoding[model]
                 ?: modelPrefixToEncoding
                     .entries.firstOrNull { (prefix, _) -> model.startsWith(prefix) }?.value
                 ?: error("no encoding for model $model")
-            return getEncoding(encoding, loader)
+            return of(encoding, loader)
         }
     }
 }

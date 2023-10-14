@@ -19,7 +19,7 @@ class EncodeBenchmark {
         val url = URL("https://unicode.org/udhr/assemblies/full_all.txt")
         Scanner(url.openStream(), StandardCharsets.UTF_8.name())
             .use { scanner -> text = scanner.useDelimiter("\\A").next() }
-        tokenizer = Tokenizer.encodingForModel("gpt-4")
+        tokenizer = Tokenizer.of("gpt-4")
     }
 
     @Benchmark

@@ -7,8 +7,17 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
+/**
+ * Platform-specific function that provides a default BPE loader.
+ */
 internal expect fun defaultPbeLoader(): BpeLoader
 
+/**
+ * Load Byte Pair Encoding (BPE) data from a byte array and return it as a map of ByteStrings to ranks.
+ *
+ * @param data The byte array containing BPE data.
+ * @return A map of ByteStrings to their corresponding ranks.
+ */
 internal fun loadTiktokenBpe(data: ByteArray): Map<ByteString, Int> {
     val bpeRanks = mutableMapOf<ByteString, Int>()
     val lines = data.decodeToString().split("\n")

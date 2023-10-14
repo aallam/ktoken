@@ -92,9 +92,9 @@ public interface Tokenizer {
          * @param loader The loader to be used for obtaining the encoding scheme.
          * @return An instance of [Tokenizer] with the specified encoding.
          */
-        public suspend fun encoding(encoding: Encoding, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
-            val tokenEncoding = TokenEncoding.getEncoding(encoding, loader)
-            return create(tokenEncoding)
+        public suspend fun of(encoding: Encoding, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
+            val tokenizationConfig = EncodingConfig.of(encoding, loader)
+            return from(tokenizationConfig)
         }
 
         /**
@@ -104,24 +104,24 @@ public interface Tokenizer {
          * @param loader The loader to be used for obtaining the encoding scheme.
          * @return An instance of [Tokenizer] with the encoding scheme for the specified model.
          */
-        public suspend fun encodingForModel(model: String, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
-            val tokenEncoding = TokenEncoding.getEncodingForModel(model, loader)
-            return create(tokenEncoding)
+        public suspend fun of(model: String, loader: BpeLoader = defaultPbeLoader()): Tokenizer {
+            val config = EncodingConfig.of(model, loader)
+            return from(config)
         }
 
         /**
-         * Builds and returns an instance of [Tokenizer] based on the specified [TokenEncoding].
+         * Builds and returns an instance of [Tokenizer] based on the specified [EncodingConfig].
          *
-         * @param tokenEncoding The [TokenEncoding] object representing the encoding scheme to be used.
+         * @param config The [EncodingConfig] object representing the encoding scheme to be used.
          * @return An instance of [Tokenizer].
          */
-        public fun create(tokenEncoding: TokenEncoding): Tokenizer {
+        public fun from(config: EncodingConfig): Tokenizer {
             val coreBPE = CoreBPE.create(
-                encoder = tokenEncoding.mergeableRanks,
-                specialTokensEncoder = tokenEncoding.specialTokens,
-                pattern = tokenEncoding.pattern
+                encoder = config.mergeableRanks,
+                specialTokensEncoder = config.specialTokens,
+                pattern = config.pattern
             )
-            val specialTokensSet = tokenEncoding.specialTokens.keys.map { it.utf8() }.toSet()
+            val specialTokensSet = config.specialTokens.keys.map { it.utf8() }.toSet()
             return TokenEncoder(bpe = coreBPE, specialTokensSet = specialTokensSet)
         }
     }

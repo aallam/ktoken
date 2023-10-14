@@ -4,6 +4,16 @@ import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.encodeUtf8
 
+/**
+ * A class representing a Core Byte Pair Encoding (BPE) tokenizer, used for encoding and decoding text.
+ *
+ * @property encoder A map that maps ByteStrings to integers for encoding.
+ * @property decoder A map that maps integers to ByteStrings for decoding.
+ * @property specialTokensEncoder A map that maps special tokens represented as ByteStrings to integers for encoding.
+ * @property specialTokensDecoder A map that maps integers to special tokens represented as ByteStrings for decoding.
+ * @property tlRegex The regular expression pattern for tokenizing text.
+ * @property tlSpecialRegex The regular expression pattern for tokenizing special tokens.
+ */
 internal class CoreBPE(
     val encoder: Map<ByteString, Int>,
     val decoder: Map<Int, ByteString>,
@@ -13,6 +23,12 @@ internal class CoreBPE(
     val tlSpecialRegex: Regex,
 ) {
 
+    /**
+     * Decode a list of token integers into a string.
+     *
+     * @param tokens The list of token integers to decode.
+     * @return The decoded string.
+     */
     fun decode(tokens: List<Int>): String {
         val buffer = Buffer()
         for (token in tokens) {
@@ -25,11 +41,24 @@ internal class CoreBPE(
         return byteString.utf8()
     }
 
+    /**
+     * Decode a single token integer into a string.
+     *
+     * @param token The token integer to decode.
+     * @return The decoded string.
+     */
     fun decode(token: Int): String {
         val piece = decoder[token] ?: specialTokensDecoder[token] ?: error("token missing from the vocabulary: $token")
         return piece.utf8()
     }
 
+    /**
+     * Encode a text string using the provided allowed special tokens.
+     *
+     * @param text The text to encode.
+     * @param allowedSpecial A set of allowed special tokens.
+     * @return A list of encoded token integers.
+     */
     fun encode(text: String, allowedSpecial: Set<String>): List<Int> {
         val encodedTokens = mutableListOf<Int>()
         var start = 0
@@ -66,7 +95,7 @@ internal class CoreBPE(
     }
 
     /**
-     * Find the next allowed special token, if any.
+     * Find the next allowed special token in the text, starting from the given index.
      */
     private fun findNextSpecialToken(
         start: Int,
@@ -90,6 +119,12 @@ internal class CoreBPE(
         return nextSpecial
     }
 
+    /**
+     * Encode a single text token and return its integer representation.
+     *
+     * @param text The text token to encode.
+     * @return The integer representation of the encoded token.
+     */
     fun encodeSingleToken(text: String): Int {
         val piece = text.encodeUtf8()
         return encoder[piece] ?: specialTokensEncoder[piece] ?: error("token missing from the vocabulary: $text")
@@ -97,6 +132,14 @@ internal class CoreBPE(
 
     companion object {
 
+        /**
+         * Create a CoreBPE instance with the provided encoder, special token encoder, and regex pattern.
+         *
+         * @param encoder A map that maps ByteStrings to integers for encoding.
+         * @param specialTokensEncoder A map that maps special tokens represented as ByteStrings to integers for encoding.
+         * @param pattern The regular expression pattern for tokenizing text.
+         * @return A CoreBPE instance.
+         */
         fun create(
             encoder: Map<ByteString, Int>,
             specialTokensEncoder: Map<ByteString, Int>,

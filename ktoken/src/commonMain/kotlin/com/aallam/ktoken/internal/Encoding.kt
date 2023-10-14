@@ -3,21 +3,52 @@ package com.aallam.ktoken.internal
 import com.aallam.ktoken.Encoding
 import okio.ByteString.Companion.encodeUtf8
 
+/**
+ * Regular expression pattern for matching P100K tokens.
+ */
 internal expect val regexP100K: Regex
 
+/**
+ * Regular expression patterns for common tokenization tasks.
+ */
 internal object Patterns {
     val P50K: Regex = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
     val P100K: Regex = regexP100K
 }
 
+/**
+ * Constants representing various tokens.
+ */
 internal object Tokens {
+    /**
+     * Represents the end of the text.
+     */
     val ENDOFTEXT = "<|endoftext|>".encodeUtf8()
+
+    /**
+     * Represents a prefix token.
+     */
     val FIM_PREFIX = "<|fim_prefix|>".encodeUtf8()
+
+    /**
+     * Represents a middle token.
+     */
     val FIM_MIDDLE = "<|fim_middle|>".encodeUtf8()
+
+    /**
+     * Represents a suffix token.
+     */
     val FIM_SUFFIX = "<|fim_suffix|>".encodeUtf8()
+
+    /**
+     * Represents the end of a prompt.
+     */
     val ENDOFPROMPT = "<|endofprompt|>".encodeUtf8()
 }
 
+/**
+ * Mapping of model names to their corresponding encoding settings.
+ */
 internal val modelToEncoding: Map<String, Encoding> = mapOf(
     // chat
     "gpt-4" to Encoding.CL100K_BASE,
@@ -63,6 +94,9 @@ internal val modelToEncoding: Map<String, Encoding> = mapOf(
     "code-search-ada-code-001" to Encoding.R50K_BASE,
 )
 
+/**
+ * Mapping of model prefixes to their corresponding encoding settings.
+ */
 internal val modelPrefixToEncoding = mapOf(
     // chat
     "gpt-4-" to Encoding.CL100K_BASE,  // e.g., gpt-4-0314, etc., plus gpt-4-32k
