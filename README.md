@@ -2,6 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.aallam.ktoken/ktoken?color=blue&label=Download)](https://central.sonatype.com/namespace/com.aallam.ktoken)
 [![License](https://img.shields.io/github/license/aallam/ktoken?color=yellow)](LICENSE.md)
+[![Documentation](https://img.shields.io/badge/docs-api-a97bff.svg?logo=kotlin)](https://mouaad.aallam.com/ktoken/)
 
 **Ktoken** is a BPE tokenizer designed for seamless integration with OpenAI's models.
 
@@ -28,16 +29,10 @@ Ktoken operates in two modes: Local (default for JVM) and Remote (default for JS
 Utilize LocalPbeLoader to retrieve encodings from local files:
 
 ```kotlin
-val tokenizer = Tokenizer.of(
-    encoding = Encoding.CL100K_BASE, 
-    loader = LocalPbeLoader(FileSystem.SYSTEM)
-)
+val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
 
 // For a specific model in the OpenAI API:
-val tokenizer = Tokenizer.of(
-    model = "gpt-4", 
-    loader = LocalPbeLoader(FileSystem.SYSTEM)
-)
+val tokenizer = Tokenizer.of(model = "gpt-4", loader = LocalPbeLoader(FileSystem.SYSTEM))
 
 val tokens = tokenizer.encode("hello world")
 val text = tokenizer.decode(listOf(15339, 1917))
@@ -48,10 +43,7 @@ val text = tokenizer.decode(listOf(15339, 1917))
 Artifacts for JVM include encoding files. Use `FileSystem.RESOURCES` to load them:
 
 ```kotlin
-val tokenizer = Tokenizer.of(
-    encoding = Encoding.CL100K_BASE, 
-    loader = LocalPbeLoader(FileSystem.RESOURCES)
-)
+val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = LocalPbeLoader(FileSystem.RESOURCES))
 ```
 
 *Note: this is the default behavior for JVM.*
@@ -62,16 +54,10 @@ val tokenizer = Tokenizer.of(
 2. Use `RemoteBpeLoader`: To load encoding from remote sources:
 
 ```kotlin
-val tokenizer = Tokenizer.of(
-    encoding = Encoding.CL100K_BASE, 
-    loader = RemoteBpeLoader()
-)
+val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = RemoteBpeLoader())
 
 // For a specific model in the OpenAI API:
-val tokenizer = Tokenizer.of(
-    model = "gpt-4", 
-    loader = RemoteBpeLoader()
-)
+val tokenizer = Tokenizer.of(model = "gpt-4", loader = RemoteBpeLoader())
 
 val tokens = tokenizer.encode("hello world")
 val text = tokenizer.decode(listOf(15339, 1917))
