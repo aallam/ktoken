@@ -108,7 +108,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     needs: [ test-jvm, test-js, test-macos ]
-    if: github.repository == 'aallam/openai-kotlin' && github.ref == 'refs/heads/main'
+    if: github.repository == 'aallam/ktoken' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
