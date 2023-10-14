@@ -1,0 +1,7 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:ktoken
+com.aallam.ktoken
+com.aallam.ktoken.encoding
+com.aallam.ktoken.loader
