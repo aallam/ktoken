@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.aallam.ktoken/ktoken?color=blue&label=Download)](https://central.sonatype.com/namespace/com.aallam.ktoken)
 [![License](https://img.shields.io/github/license/aallam/ktoken?color=yellow)](LICENSE.md)
-[![Documentation](https://img.shields.io/badge/docs-api-a97bff.svg?logo=kotlin)](https://mouaad.aallam.com/ktoken/)
+[![Documentation](https://img.shields.io/badge/docs-api-a97bff.svg?logo=kotlin)](https://mouaad.aallam.com/ktoken/ktoken)
 
 **Ktoken** is a BPE tokenizer designed for seamless integration with OpenAI's models.
 
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.aallam.ktoken:ktoken:0.2.0"
+    implementation "com.aallam.ktoken:ktoken:0.3.0"
 }
 ```
 ### Usage Modes
@@ -71,7 +71,7 @@ You might alternatively use [ktoken-bom](/ktoken-bom) by adding the following de
 ```groovy
 dependencies {
     // Import Kotlin API client BOM
-    implementation platform('com.aallam.ktoken:ktoken-bom:0.1.0')
+    implementation platform('com.aallam.ktoken:ktoken-bom:0.3.0')
 
     // Define dependencies without versions
     implementation 'com.aallam.ktoken:ktoken'
@@ -79,10 +79,10 @@ dependencies {
 }
 ```
 
-### 🌟 Multiplatform Projects
+### 🔀 Multiplatform Projects
 
 For multiplatform projects, add the **ktoken** dependency to `commonMain`, and select an [engine](https://ktor.io/docs/http-client-engines.html) for each target.
 
-## 🔐 License
+## 📄 License
 Ktoken is open-source software and distributed under the [MIT license](LICENSE.md).
 **This project is not affiliated with nor endorsed by OpenAI**.
