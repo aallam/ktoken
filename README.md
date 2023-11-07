@@ -6,9 +6,7 @@
 
 **Ktoken** is a BPE tokenizer designed for seamless integration with OpenAI's models.
 
-## ⚡️ Getting Started
-
-### Installation
+## 📦 Setup
 Install **Ktoken** by adding the dependency to your `build.gradle` file:
 
 ```groovy
@@ -20,7 +18,18 @@ dependencies {
     implementation "com.aallam.ktoken:ktoken:0.3.0"
 }
 ```
-### Usage Modes
+## ⚡️ Getting Started
+
+```kotlin
+val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE)
+// For a specific model in the OpenAI API:
+val tokenizer = Tokenizer.of(model = "gpt-4")
+
+val tokens = tokenizer.encode("hello world")
+val text = tokenizer.decode(listOf(15339, 1917))
+```
+
+### ⚙️ Usage Modes
 
 Ktoken operates in two modes: Local (default for JVM) and Remote (default for JS/Native).
 
@@ -30,12 +39,8 @@ Utilize LocalPbeLoader to retrieve encodings from local files:
 
 ```kotlin
 val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
-
 // For a specific model in the OpenAI API:
 val tokenizer = Tokenizer.of(model = "gpt-4", loader = LocalPbeLoader(FileSystem.SYSTEM))
-
-val tokens = tokenizer.encode("hello world")
-val text = tokenizer.decode(listOf(15339, 1917))
 ```
 
 ##### JVM Specifics:
@@ -58,13 +63,9 @@ val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = RemoteBpe
 
 // For a specific model in the OpenAI API:
 val tokenizer = Tokenizer.of(model = "gpt-4", loader = RemoteBpeLoader())
-
-val tokens = tokenizer.encode("hello world")
-val text = tokenizer.decode(listOf(15339, 1917))
-
 ```
 
-##### BOM Usage
+### 📋 BOM Usage
 
 You might alternatively use [ktoken-bom](/ktoken-bom) by adding the following dependency to your `build.gradle` file:
 
