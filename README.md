@@ -35,7 +35,7 @@ Ktoken operates in two modes: Local (default for JVM) and Remote (default for JS
 
 #### 📍 Local Mode
 
-Utilize LocalPbeLoader to retrieve encodings from local files:
+Utilize `LocalPbeLoader` to retrieve encodings from local files:
 
 ```kotlin
 val tokenizer = Tokenizer.of(encoding = Encoding.CL100K_BASE, loader = LocalPbeLoader(FileSystem.SYSTEM))
