@@ -1,9 +1,6 @@
 package com.aallam.ktoken
 
-import com.aallam.ktoken.encoding.CL100KBase
-import com.aallam.ktoken.encoding.P50KBase
-import com.aallam.ktoken.encoding.P50KEdit
-import com.aallam.ktoken.encoding.R50KBase
+import com.aallam.ktoken.encoding.*
 import com.aallam.ktoken.loader.BpeLoader
 import okio.ByteString
 
@@ -26,6 +23,12 @@ public interface Encoding {
     public fun encodingConfig(ranks: Map<ByteString, Int>): EncodingConfig
 
     public companion object {
+
+        /**
+         * A predefined [Encoding] instance representing the [O200KBase] encoding type.
+         */
+        public val O200K_BASE: Encoding = O200KBase()
+
         /**
          * A predefined [Encoding] instance representing the [CL100KBase] encoding type.
          */

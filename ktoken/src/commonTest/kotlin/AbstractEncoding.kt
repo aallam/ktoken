@@ -75,6 +75,12 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
+    fun baseEncodeO200K() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.of(Encoding.O200K_BASE, loader)
+        assertContentEquals(listOf(24912, 2375), tokenizer.encode("hello world"))
+    }
+
+    @Test
     fun emptyEncode() = runTest(timeout = 1.minutes) {
         assertContentEquals(emptyList(), tokenizer().encode(""))
     }

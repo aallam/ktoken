@@ -14,6 +14,17 @@ internal expect val regexP100K: Regex
 internal object Patterns {
     val P50K: Regex = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
     val P100K: Regex = regexP100K
+    val O200K: Regex = Regex(build0200KPattern())
+
+    private fun build0200KPattern() = listOf(
+        """[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]*[\p{Ll}\p{M}\p{N}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
+        """[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]+[\p{Ll}\p{M}\p{N}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
+        """\p{N}{1,3}""",
+        """ ?[^\s\p{L}\p{N}]+[\r\n/]*""",
+        """\s*[\r\n]+""",
+        """\s+(?!\S)""",
+        """\s+"""
+    ).joinToString("|")
 }
 
 /**
@@ -51,6 +62,7 @@ internal object Tokens {
  */
 internal val modelToEncoding: Map<String, Encoding> = mapOf(
     // chat
+    "gpt-4o" to Encoding.O200K_BASE,
     "gpt-4" to Encoding.CL100K_BASE,
     "gpt-3.5-turbo" to Encoding.CL100K_BASE,
     "gpt-35-turbo" to Encoding.CL100K_BASE,  // Azure deployment name
@@ -99,6 +111,7 @@ internal val modelToEncoding: Map<String, Encoding> = mapOf(
  */
 internal val modelPrefixToEncoding = mapOf(
     // chat
+    "gpt-4o-" to Encoding.O200K_BASE,
     "gpt-4-" to Encoding.CL100K_BASE,  // e.g., gpt-4-0314, etc., plus gpt-4-32k
     "gpt-3.5-turbo-" to Encoding.CL100K_BASE,  // e.g, gpt-3.5-turbo-0301, -0401, etc.
     "gpt-35-turbo-" to Encoding.CL100K_BASE,  // Azure deployment name
