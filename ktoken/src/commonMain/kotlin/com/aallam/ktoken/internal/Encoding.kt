@@ -9,22 +9,17 @@ import okio.ByteString.Companion.encodeUtf8
 internal expect val regexP100K: Regex
 
 /**
+ * Regular expression pattern for matching O200K tokens.
+ */
+internal expect val regexO200K: Regex
+
+/**
  * Regular expression patterns for common tokenization tasks.
  */
 internal object Patterns {
     val P50K: Regex = Regex("""'s|'t|'re|'ve|'m|'ll|'d| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]+|\s+(?!\S)|\s+""")
     val P100K: Regex = regexP100K
-    val O200K: Regex = Regex(build0200KPattern())
-
-    private fun build0200KPattern() = listOf(
-        """[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]*[\p{Ll}\p{M}\p{N}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
-        """[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]+[\p{Ll}\p{M}\p{N}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
-        """\p{N}{1,3}""",
-        """ ?[^\s\p{L}\p{N}]+[\r\n/]*""",
-        """\s*[\r\n]+""",
-        """\s+(?!\S)""",
-        """\s+"""
-    ).joinToString("|")
+    val O200K = regexO200K
 }
 
 /**
