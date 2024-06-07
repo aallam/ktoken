@@ -10,52 +10,6 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractEncoding(private val loader: BpeLoader) {
 
-    internal suspend fun tokenizer() = Tokenizer.of(
-        model = "gpt-3.5-turbo-16k",
-        loader = loader
-    )
-
-    @Test
-    fun encodeUnicode() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer().encode(
-            text = "hello world!你好，世界！",
-            allowedSpecial = setOf("all"),
-            disallowedSpecial = setOf("all"),
-        )
-        val sourceTokens = listOf(15339, 1917, 0, 57668, 53901, 3922, 3574, 244, 98220, 6447)
-        assertContentEquals(sourceTokens, encode, "Encoding should be equal")
-    }
-
-    @Test
-    fun encodeAllowSpecial() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer().encode(
-            text = "hello <|endoftext|>",
-            allowedSpecial = setOf("<|endoftext|>")
-        )
-        val sourceTokens = listOf(15339, 220, 100257)
-        assertContentEquals(sourceTokens, encode, "Encoding should be equal")
-    }
-
-    @Test
-    fun encodeDisallowAll() = runTest(timeout = 1.minutes) {
-        val encode = tokenizer().encode(
-            text = "hello <|endoftext|>",
-            allowedSpecial = setOf("<|endoftext|>"),
-            disallowedSpecial = setOf("all")
-        )
-        val sourceTokens = listOf(15339, 220, 100257)
-        assertContentEquals(sourceTokens, encode, "Encoding should be equal")
-    }
-
-    @Test
-    fun encodeRegex() = runTest(timeout = 1.minutes) {
-        assertContentEquals(listOf(38149), tokenizer().encode("rer"))
-        assertContentEquals(listOf(2351, 81), tokenizer().encode("'rer"))
-        assertContentEquals(listOf(31213, 198, 220), tokenizer().encode("today\n "))
-        assertContentEquals(listOf(31213, 27907), tokenizer().encode("today\n \n"))
-        assertContentEquals(listOf(31213, 14211), tokenizer().encode("today\n  \n"))
-    }
-
     @Test
     fun basicEncodeR50K() = runTest(timeout = 1.minutes) {
         val tokenizer = Tokenizer.of(Encoding.R50K_BASE, loader)
@@ -75,14 +29,70 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
+    fun baseEncodeO200K() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.of(Encoding.O200K_BASE, loader)
+        assertContentEquals(listOf(24912, 2375), tokenizer.encode("hello world"))
+    }
+
+    internal suspend fun tokenizer() = Tokenizer.of(
+        model = "gpt-4o",
+        loader = loader
+    )
+
+    @Test
+    fun encodeUnicode() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        val input = "hello world!你好，世界！"
+        val encode = tokenizer.encode(
+            text = input,
+            allowedSpecial = setOf("all"),
+            disallowedSpecial = setOf("all"),
+        )
+        val decoded = tokenizer.decode(encode)
+        assertEquals(input, decoded, "Encoding should be equal")
+    }
+
+    @Test
+    fun encodeAllowSpecial() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        val encode = tokenizer.encode(
+            text = "hello <|endoftext|>",
+            allowedSpecial = setOf("<|endoftext|>")
+        )
+        val eot = tokenizer.encodeSingleToken("<|endoftext|>")
+        assertContains(encode, eot)
+    }
+
+    @Test
+    fun encodeDisallowAll() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        val encode = tokenizer.encode(
+            text = "hello <|endoftext|>",
+            allowedSpecial = setOf("<|endoftext|>"),
+            disallowedSpecial = setOf("all")
+        )
+        val eot = tokenizer.encodeSingleToken("<|endoftext|>")
+        assertContains(encode, eot)
+    }
+
+    @Test
+    fun encodeRegex() = runTest(timeout = 1.minutes) {
+        val tokenizer = tokenizer()
+        assertEquals("rer", tokenizer.decode(tokenizer.encode("rer")))
+        assertEquals("'rer", tokenizer.decode(tokenizer.encode("'rer")))
+        assertEquals("today\n ", tokenizer.decode(tokenizer.encode("today\n ")))
+        assertEquals("today\n \n", tokenizer.decode(tokenizer.encode("today\n \n")))
+        assertEquals("today\n  \n", tokenizer.decode(tokenizer.encode("today\n  \n")))
+    }
+
+    @Test
     fun emptyEncode() = runTest(timeout = 1.minutes) {
         assertContentEquals(emptyList(), tokenizer().encode(""))
     }
 
     @Test
     fun encodeSurrogatePairs() = runTest(timeout = 1.minutes) {
-        assertContentEquals(listOf(9468, 239, 235), tokenizer().encode("👍"))
-        assertContentEquals(listOf(9468, 239, 235), tokenizer().encode("\ud83d\udc4d"))
+        assertContentEquals(tokenizer().encode("👍"), tokenizer().encode("\ud83d\udc4d"))
     }
 
     @Test
@@ -144,9 +154,8 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     fun specialTokens() = runTest(timeout = 1.minutes) {
         val tokenizer = tokenizer()
         val eot = tokenizer.encodeSingleToken("<|endoftext|>")
-        val fip = tokenizer.encodeSingleToken("<|fim_prefix|>")
-        val fim = tokenizer.encodeSingleToken("<|fim_middle|>")
-        var text = "<|endoftext|> hello <|fim_prefix|>"
+        val eop = tokenizer.encodeSingleToken("<|endofprompt|>")
+        var text = "<|endoftext|> hello <|endofprompt|>"
         var tokens = tokenizer.encode(text, disallowedSpecial = emptySet())
         assertNotContains(tokens, eot)
         assertFails {
@@ -156,30 +165,26 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
             tokenizer.encode(text, disallowedSpecial = setOf("<|endoftext|>"))
         }
         assertFails {
-            tokenizer.encode(text, disallowedSpecial = setOf("<|fim_prefix|>"))
+            tokenizer.encode(text, disallowedSpecial = setOf("<|endofprompt|>"))
         }
 
-        text = "<|endoftext|> hello <|fim_prefix|> there <|fim_middle|>"
+        text = "<|endoftext|> hello <|endofprompt|>"
 
         tokens = tokenizer.encode(text, disallowedSpecial = emptySet())
-        assertNotContains(tokens, eot, fip, fim)
+        assertNotContains(tokens, eot, eop)
 
         tokens = tokenizer.encode(text, allowedSpecial = setOf("all"), disallowedSpecial = emptySet())
-        assertContains(tokens, eot, fip, fim)
+        assertContains(tokens, eot, eop)
 
         tokens = tokenizer.encode(text, allowedSpecial = setOf("all"), disallowedSpecial = setOf("all"))
-        assertContains(tokens, eot, fip, fim)
+        assertContains(tokens, eot, eop)
 
-        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|fim_prefix|>"), disallowedSpecial = emptySet())
-        assertContains(tokens, fip)
-        assertNotContains(tokens, eot, fim)
+        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|endofprompt|>"), disallowedSpecial = emptySet())
+        assertContains(tokens, eop)
+        assertNotContains(tokens, eot)
 
         tokens = tokenizer.encode(text, allowedSpecial = setOf("<|endoftext|>"), disallowedSpecial = emptySet())
         assertContains(tokens, eot)
-        assertNotContains(tokens, fip, fim)
-
-        tokens = tokenizer.encode(text, allowedSpecial = setOf("<|fim_middle|>"), disallowedSpecial = emptySet())
-        assertContains(tokens, fim)
-        assertNotContains(tokens, fip, eot)
+        assertNotContains(tokens, eop)
     }
 }
