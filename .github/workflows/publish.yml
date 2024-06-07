@@ -9,7 +9,7 @@ env:
 jobs:
   publish:
     name: Publish to Sonatype
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Upload Artifacts
-        run: ./gradlew publishAllPublicationsToMavenCentral --no-configuration-cache
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
