@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.aallam.ktoken:ktoken:0.3.0"
+    implementation "com.aallam.ktoken:ktoken:0.4.0"
 }
 ```
 ## ⚡️ Getting Started
