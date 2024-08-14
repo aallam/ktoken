@@ -72,7 +72,7 @@ You might alternatively use [ktoken-bom](/ktoken-bom) by adding the following de
 ```groovy
 dependencies {
     // Import Kotlin API client BOM
-    implementation platform('com.aallam.ktoken:ktoken-bom:0.3.0')
+    implementation platform('com.aallam.ktoken:ktoken-bom:0.4.0')
 
     // Define dependencies without versions
     implementation 'com.aallam.ktoken:ktoken'
