@@ -10,7 +10,7 @@
 Focused on internal refactoring and API stabilization to enhance usability and facilitate future development.
 
 ### Breaking Changes
-- Rename `Enconding` to `EncodingConfig`.
+- Rename `Encoding` to `EncodingConfig`.
 - Rework encodings to enhance extensibility:
     - Add a new `Encoding` interface.
     - Introduce default implementations of `Encoding`: `CL100KBase`, `P50KBase`, `R50KBase`, and `P50KEdit`.
