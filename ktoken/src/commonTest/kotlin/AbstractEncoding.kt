@@ -34,6 +34,37 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
         assertContentEquals(listOf(24912, 2375), tokenizer.encode("hello world"))
     }
 
+    @Test
+    fun recentModelAliasesMapToO200K() = runTest(timeout = 1.minutes) {
+        val reference = Tokenizer.of(Encoding.O200K_BASE, loader).encode("hello world")
+        val models = listOf(
+            "o1",
+            "o3",
+            "o4-mini",
+            "gpt-4.1",
+            "gpt-5",
+            "ft:gpt-4o:example",
+            "o1-2024-12-17",
+            "o3-2025-02-01",
+            "o4-mini-2025-02-01",
+            "gpt-4.1-2025-04-14",
+            "gpt-4.5-preview-2025-02-27",
+            "gpt-5-2025-08-07",
+            "chatgpt-4o-latest",
+        )
+        for (model in models) {
+            val tokens = Tokenizer.of(model = model, loader = loader).encode("hello world")
+            assertContentEquals(reference, tokens)
+        }
+    }
+
+    @Test
+    fun gptOssRemainsUnsupported() = runTest(timeout = 1.minutes) {
+        assertFails {
+            Tokenizer.of(model = "gpt-oss-120b", loader = loader)
+        }
+    }
+
     internal suspend fun tokenizer() = Tokenizer.of(
         model = "gpt-4o",
         loader = loader
