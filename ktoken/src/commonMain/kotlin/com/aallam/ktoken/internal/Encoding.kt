@@ -50,6 +50,81 @@ internal object Tokens {
      * Represents the end of a prompt.
      */
     val ENDOFPROMPT = "<|endofprompt|>".encodeUtf8()
+
+    /**
+     * Represents the start of the text.
+     */
+    val STARTOFTEXT = "<|startoftext|>".encodeUtf8()
+
+    /**
+     * Represents the harmony return token.
+     */
+    val RETURN = "<|return|>".encodeUtf8()
+
+    /**
+     * Represents the harmony constrain token.
+     */
+    val CONSTRAIN = "<|constrain|>".encodeUtf8()
+
+    /**
+     * Represents the harmony channel token.
+     */
+    val CHANNEL = "<|channel|>".encodeUtf8()
+
+    /**
+     * Represents the harmony start token.
+     */
+    val START = "<|start|>".encodeUtf8()
+
+    /**
+     * Represents the harmony end token.
+     */
+    val END = "<|end|>".encodeUtf8()
+
+    /**
+     * Represents the harmony message token.
+     */
+    val MESSAGE = "<|message|>".encodeUtf8()
+
+    /**
+     * Represents the harmony call token.
+     */
+    val CALL = "<|call|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200000.
+     */
+    val RESERVED_200000 = "<|reserved_200000|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200001.
+     */
+    val RESERVED_200001 = "<|reserved_200001|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200004.
+     */
+    val RESERVED_200004 = "<|reserved_200004|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200009.
+     */
+    val RESERVED_200009 = "<|reserved_200009|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200010.
+     */
+    val RESERVED_200010 = "<|reserved_200010|>".encodeUtf8()
+
+    /**
+     * Represents reserved harmony token 200011.
+     */
+    val RESERVED_200011 = "<|reserved_200011|>".encodeUtf8()
+
+    /**
+     * Represents a reserved harmony token with the given [id].
+     */
+    fun reserved(id: Int) = "<|reserved_$id|>".encodeUtf8()
 }
 
 /**
@@ -121,6 +196,7 @@ internal val modelPrefixToEncoding = mapOf(
     "gpt-4.1-" to Encoding.O200K_BASE,
     "chatgpt-4o-" to Encoding.O200K_BASE,
     "gpt-4o-" to Encoding.O200K_BASE,
+    "gpt-oss-" to Encoding.O200K_HARMONY,
     "gpt-4-" to Encoding.CL100K_BASE,  // e.g., gpt-4-0314, etc., plus gpt-4-32k
     "gpt-3.5-turbo-" to Encoding.CL100K_BASE,  // e.g, gpt-3.5-turbo-0301, -0401, etc.
     "gpt-35-turbo-" to Encoding.CL100K_BASE,  // Azure deployment name

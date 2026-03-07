@@ -59,10 +59,19 @@ abstract class AbstractEncoding(private val loader: BpeLoader) {
     }
 
     @Test
-    fun gptOssRemainsUnsupported() = runTest(timeout = 1.minutes) {
-        assertFails {
-            Tokenizer.of(model = "gpt-oss-120b", loader = loader)
-        }
+    fun o200KHarmonyEncoding() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.of(Encoding.O200K_HARMONY, loader)
+        assertContentEquals(listOf(24912, 2375), tokenizer.encode("hello world"))
+        assertEquals(200002, tokenizer.encodeSingleToken("<|return|>"))
+        assertEquals(200500, tokenizer.encodeSingleToken("<|reserved_200500|>"))
+        val specialTokens = tokenizer.encode("<|return|><|reserved_200500|>", allowedSpecial = setOf("all"))
+        assertContains(specialTokens, 200002, 200500)
+    }
+
+    @Test
+    fun gptOssModelsMapToO200KHarmony() = runTest(timeout = 1.minutes) {
+        val tokenizer = Tokenizer.of(model = "gpt-oss-120b", loader = loader)
+        assertEquals(200002, tokenizer.encodeSingleToken("<|return|>"))
     }
 
     internal suspend fun tokenizer() = Tokenizer.of(
