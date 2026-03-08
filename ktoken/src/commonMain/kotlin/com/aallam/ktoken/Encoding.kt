@@ -30,6 +30,11 @@ public interface Encoding {
         public val O200K_BASE: Encoding = O200KBase()
 
         /**
+         * A predefined [Encoding] instance representing the [O200KHarmony] encoding type.
+         */
+        public val O200K_HARMONY: Encoding = O200KHarmony()
+
+        /**
          * A predefined [Encoding] instance representing the [CL100KBase] encoding type.
          */
         public val CL100K_BASE: Encoding = CL100KBase()
